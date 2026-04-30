@@ -23,6 +23,7 @@ public class AvatarUsuario {
 
     public String imagen;
 
+    public int hp;
     public int oro;
 
     public int xp;
