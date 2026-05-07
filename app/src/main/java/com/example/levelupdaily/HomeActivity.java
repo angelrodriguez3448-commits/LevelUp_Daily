@@ -1,5 +1,6 @@
 package com.example.levelupdaily;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,8 @@ public class HomeActivity extends AppCompatActivity {
     private AvatarUsuario avatarG;
     private TextView tNombreAvatar, tHP, tOro, tNivel, tXP;
     private ImageView iAvatar;
+
+    private Button btnCrearMision;
     //Botones de prueba
     //private Button btnHP, btnXP;
 
@@ -34,6 +37,7 @@ public class HomeActivity extends AppCompatActivity {
         tNivel = findViewById(R.id.tNivel);
         iAvatar = findViewById(R.id.iAvatar);
         tXP = findViewById(R.id.tXP);
+        btnCrearMision = findViewById(R.id.btnCrearMision);
         //Botones de prueba
         /*
         btnHP = findViewById(R.id.btnHP);
@@ -45,6 +49,12 @@ public class HomeActivity extends AppCompatActivity {
         controlador.obtenerAvatar(idUser, avatar -> {
             this.avatarG = avatar;
             actualizarInterfaz();
+        });
+
+        btnCrearMision.setOnClickListener(v->{
+            Intent intent = new Intent(HomeActivity.this, CrearMisionActivity.class);
+            intent.putExtra("ID_user", avatarG.id_usuario);
+            startActivity(intent);
         });
 
         //Botones de prueba

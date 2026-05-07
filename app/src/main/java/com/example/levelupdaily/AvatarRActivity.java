@@ -67,6 +67,7 @@ public class AvatarRActivity extends AppCompatActivity {
                     });
                     Intent intent = new Intent(AvatarRActivity.this, MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }
 
                 @Override

@@ -63,6 +63,17 @@
             android:padding="5sp"
             android:text="XP:" />
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50sp" />
+
+        <Button
+            android:id="@+id/btnCrearMision"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="crear mision"
+            android:textSize="20dp" />
+
         <!--Inicio de interfaz de prueba-->
         <!--
         <Button
