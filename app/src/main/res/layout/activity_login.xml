@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10sp"
-            android:text="Registrate"
+            android:text="Inicia sesion"
             android:textSize="35dp"
             android:textStyle="normal|bold" />
 

@@ -1,9 +1,13 @@
 package com.example.levelupdaily;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,13 +15,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class HomeActivity extends AppCompatActivity {
-    //Objeto avatar global
+    private ImageButton M;
+    private ImageButton S;
+    private ImageButton C;
     private AvatarUsuario avatarG;
     private TextView tNombreAvatar, tHP, tOro, tNivel, tXP;
     private ImageView iAvatar;
     //Botones de prueba
     //private Button btnHP, btnXP;
-
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +75,30 @@ public class HomeActivity extends AppCompatActivity {
         });
          */
         //Fin botones de prueba
+        M = (ImageButton) findViewById(R.id.mision);
+        M.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(HomeActivity.this, Misiones.class);
+                startActivity(intent);
+            }
+        });
+        C = (ImageButton) findViewById(R.id.conf);
+        C.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(HomeActivity.this, Configuracion.class);
+                startActivity(intent);
+            }
+        });
+        S = (ImageButton) findViewById(R.id.store);
+        S.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(HomeActivity.this, Store.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void actualizarInterfaz(){
@@ -86,4 +116,6 @@ public class HomeActivity extends AppCompatActivity {
             Log.d("UI_TEST", "Vistas actualizadas en pantalla");
         });
     }
+
+
 }
