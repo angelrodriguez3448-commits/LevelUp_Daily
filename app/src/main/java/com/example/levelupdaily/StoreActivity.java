@@ -2,11 +2,11 @@ package com.example.levelupdaily;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-public class Configuracion extends AppCompatActivity  {
+public class StoreActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.config);
+        setContentView(R.layout.activity_store);
 
     }
 }

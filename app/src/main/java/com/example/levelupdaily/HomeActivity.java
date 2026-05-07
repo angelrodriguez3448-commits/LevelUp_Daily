@@ -1,9 +1,10 @@
 package com.example.levelupdaily;
 
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +16,9 @@ public class HomeActivity extends AppCompatActivity {
     private AvatarUsuario avatarG;
     private TextView tNombreAvatar, tHP, tOro, tNivel, tXP;
     private ImageView iAvatar;
+    private ImageButton M;
+    private ImageButton S;
+    private ImageButton C;
     //Botones de prueba
     //private Button btnHP, btnXP;
 
@@ -69,6 +73,34 @@ public class HomeActivity extends AppCompatActivity {
         });
          */
         //Fin botones de prueba
+
+        M = (ImageButton) findViewById(R.id.mision);
+        M.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(HomeActivity.this, MisionesActivity.class);
+                intent.putExtra("ID_user", avatarG.id_usuario);
+                startActivity(intent);
+            }
+        });
+        C = (ImageButton) findViewById(R.id.conf);
+        C.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(HomeActivity.this, ConfiguracionActivity.class);
+                intent.putExtra("ID_user", avatarG.id_usuario);
+                startActivity(intent);
+            }
+        });
+        S = (ImageButton) findViewById(R.id.store);
+        S.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(HomeActivity.this, StoreActivity.class);
+                intent.putExtra("ID_user", avatarG.id_usuario);
+                startActivity(intent);
+            }
+        });
     }
 
     private void actualizarInterfaz(){
