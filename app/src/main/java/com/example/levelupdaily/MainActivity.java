@@ -30,10 +30,12 @@ public class MainActivity extends AppCompatActivity {
     private void Login(){
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void Registrar(){
         Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
         startActivity(intent);
+        finish();
     }
 }
