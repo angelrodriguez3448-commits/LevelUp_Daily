@@ -29,12 +29,18 @@ public class LoginActivity extends AppCompatActivity {
         String nombre = etNombre.getText().toString();
         String password = etPassword.getText().toString();
 
+        if (nombre.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Por favor llene todos los campos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         control.autenticarUsuario(nombre, password, new ControladorAcceso.LoginCallback() {
             @Override
             public void onSuccess(Usuario usuario) {
-                runOnUiThread(()->{
+                runOnUiThread(()-> {
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    intent.putExtra("ID_user", usuario.id_usuario);
+                    // Unificamos la clave a "id_usuario" y el tipo a int (que es lo que tiene el objeto Usuario)
+                    intent.putExtra("id_usuario", usuario.id_usuario);
                     startActivity(intent);
                     finish();
                 });
@@ -42,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(()->{
+                runOnUiThread(()-> {
                     Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
                 });
             }

@@ -18,15 +18,23 @@ public class AvatarRActivity extends AppCompatActivity {
     private Button btnFoto, btnFinlaizar;
     private ImageView ivAvat;
     private String uriAvat;
-    private long usuario;
+    private int idUsuario; // Cambiado a int para consistencia
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_avatar_r);
-        Bundle extras = getIntent().getExtras();
-        if(extras != null){
-            usuario = extras.getLong("id_usuario");
+        
+        // Intentar obtener el ID como int o long y convertirlo
+        idUsuario = getIntent().getIntExtra("id_usuario", -1);
+        if (idUsuario == -1) {
+            idUsuario = (int) getIntent().getLongExtra("id_usuario", -1);
+        }
+
+        if (idUsuario == -1) {
+            Toast.makeText(this, "Error: Usuario no identificado", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
         etNomAvat = findViewById(R.id.EditNomAvatar);
@@ -43,7 +51,6 @@ public class AvatarRActivity extends AppCompatActivity {
         btnFinlaizar.setOnClickListener(v -> registrarAvatar());
     }
 
-    // Lanzador para abrir la galeria
     ActivityResultLauncher<PickVisualMediaRequest>
             pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if(uri != null){
@@ -57,24 +64,23 @@ public class AvatarRActivity extends AppCompatActivity {
         String nombre = etNomAvat.getText().toString();
 
         if(nombre.isEmpty()){
-            Toast.makeText(this, "Por favor llene todos los campos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Por favor escribe un nombre", Toast.LENGTH_SHORT).show();
         } else{
-            control.registrarAvatar(usuario, nombre, uriAvat, new ControladorAvatar.RegistroCallback() {
+            control.registrarAvatar((long) idUsuario, nombre, uriAvat, new ControladorAvatar.RegistroCallback() {
                 @Override
                 public void onSuccess() {
                     runOnUiThread(()->{
-                        Toast.makeText(AvatarRActivity.this, "Avatar creado", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AvatarRActivity.this, "¡Avatar creado con éxito!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(AvatarRActivity.this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
                     });
-                    Intent intent = new Intent(AvatarRActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
                 }
 
                 @Override
                 public void onError(String error) {
-                    runOnUiThread(()->{
-                        Toast.makeText(AvatarRActivity.this, "Error:" + error, Toast.LENGTH_SHORT).show();
-                    });
+                    runOnUiThread(()-> Toast.makeText(AvatarRActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show());
                 }
             });
         }

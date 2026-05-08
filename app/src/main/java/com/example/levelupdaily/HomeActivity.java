@@ -3,119 +3,86 @@ package com.example.levelupdaily;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 public class HomeActivity extends AppCompatActivity {
-    //Objeto avatar global
     private AvatarUsuario avatarG;
     private TextView tNombreAvatar, tHP, tOro, tNivel, tXP;
-    private ImageView iAvatar;
-    private ImageButton M;
-    private ImageButton S;
-    private ImageButton C;
-    //Botones de prueba
-    //private Button btnHP, btnXP;
+    private ImageButton btnMisiones, btnStore, btnConf, btnInventario;
+    private int idUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        //Recuperar el ID del usuario
-        int idUser = getIntent().getIntExtra("ID_user", -1);
-
-        Toast.makeText(HomeActivity.this, "Id user" + idUser, Toast.LENGTH_SHORT).show();
-
         tNombreAvatar = findViewById(R.id.tNombreAvatar);
         tHP = findViewById(R.id.tHP);
         tOro = findViewById(R.id.tOro);
         tNivel = findViewById(R.id.tNivel);
-        iAvatar = findViewById(R.id.iAvatar);
         tXP = findViewById(R.id.tXP);
-        //Botones de prueba
-        /*
-        btnHP = findViewById(R.id.btnHP);
-        btnXP = findViewById(R.id.btnXP);
-         */
+        
+        btnMisiones = findViewById(R.id.mision);
+        btnConf = findViewById(R.id.conf);
+        btnStore = findViewById(R.id.store);
+        btnInventario = findViewById(R.id.btnAbrirInventario);
 
+        idUser = getIntent().getIntExtra("id_usuario", -1);
+        if (idUser == -1) idUser = getIntent().getIntExtra("ID_user", -1);
+
+        if (idUser == -1) {
+            Toast.makeText(this, "Sesión inválida", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        btnMisiones.setOnClickListener(v -> abrirPantalla(MisionesActivity.class));
+        btnStore.setOnClickListener(v -> abrirPantalla(StoreActivity.class));
+        btnConf.setOnClickListener(v -> abrirPantalla(ConfiguracionActivity.class));
+        btnInventario.setOnClickListener(v -> abrirPantalla(InventarioActivity.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarDatosPersonaje();
+    }
+
+    private void cargarDatosPersonaje() {
         ControladorAvatar controlador = new ControladorAvatar(getApplication());
-
         controlador.obtenerAvatar(idUser, avatar -> {
-            this.avatarG = avatar;
-            actualizarInterfaz();
-        });
-
-        //Botones de prueba
-        /*
-        btnHP.setOnClickListener(v->{
-            if(avatarG != null){
-                int numRandom = (int) (Math.random()*(-10) - 5);
-                controlador.modificarHP(avatarG, numRandom, avatar -> {
+            runOnUiThread(() -> {
+                if (avatar != null) {
                     this.avatarG = avatar;
                     actualizarInterfaz();
-                });
-            }
-        });
-        btnXP.setOnClickListener(v->{
-            if(avatarG != null){
-                int numRandom = (int) (Math.random()*20) + 10;
-                controlador.modificarXP(avatarG, numRandom, avatar -> {
-                    this.avatarG = avatar;
-                    actualizarInterfaz();
-                });
-            }
-        });
-         */
-        //Fin botones de prueba
-
-        M = (ImageButton) findViewById(R.id.mision);
-        M.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Intent intent = new Intent(HomeActivity.this, MisionesActivity.class);
-                intent.putExtra("ID_user", avatarG.id_usuario);
-                startActivity(intent);
-            }
-        });
-        C = (ImageButton) findViewById(R.id.conf);
-        C.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Intent intent = new Intent(HomeActivity.this, ConfiguracionActivity.class);
-                intent.putExtra("ID_user", avatarG.id_usuario);
-                startActivity(intent);
-            }
-        });
-        S = (ImageButton) findViewById(R.id.store);
-        S.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Intent intent = new Intent(HomeActivity.this, StoreActivity.class);
-                intent.putExtra("ID_user", avatarG.id_usuario);
-                startActivity(intent);
-            }
+                } else {
+                    Intent intent = new Intent(this, AvatarRActivity.class);
+                    intent.putExtra("id_usuario", (long) idUser);
+                    startActivity(intent);
+                }
+            });
         });
     }
 
-    private void actualizarInterfaz(){
-        runOnUiThread(()->{
-            tNombreAvatar.setText("" + avatarG.avatar_name);
+    private void abrirPantalla(Class<?> cls) {
+        if (avatarG != null) {
+            Intent intent = new Intent(this, cls);
+            intent.putExtra("id_usuario", idUser);
+            startActivity(intent);
+        }
+    }
+
+    private void actualizarInterfaz() {
+        if (avatarG != null) {
+            tNombreAvatar.setText(avatarG.avatar_name);
             tHP.setText("HP: " + avatarG.hp);
             tOro.setText("Oro: " + avatarG.oro);
             tNivel.setText("Nivel: " + avatarG.nivel);
             tXP.setText("XP: " + avatarG.xp);
-
-            if(avatarG.imagen != null){
-                //iAvatar.setImageURI(Uri.parse(avatar.imagen));
-            }
-
-            Log.d("UI_TEST", "Vistas actualizadas en pantalla");
-        });
+        }
     }
 }

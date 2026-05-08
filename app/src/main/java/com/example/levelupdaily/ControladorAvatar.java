@@ -18,19 +18,16 @@ public class ControladorAvatar {
     public void registrarAvatar(long idUs, String nombre, String uriAva, RegistroCallback callback){
         executor.execute(()->{
             try{
-                //Acceso a la DB
                 AvatarUsuario nuevoAva = new AvatarUsuario();
                 nuevoAva.id_usuario = Math.toIntExact(idUs);
                 nuevoAva.avatar_name = nombre;
                 nuevoAva.imagen = uriAva;
                 nuevoAva.hp = 100;
-                nuevoAva.oro = 25;
+                nuevoAva.oro = 200; // Iniciamos con 200 de oro
                 nuevoAva.xp = 0;
                 nuevoAva.nivel = 1;
 
                 avatarDao.registrarAvatar(nuevoAva);
-
-                //Notificar exito
                 callback.onSuccess();
             } catch (Exception e) {
                 callback.onError(e.getMessage());
@@ -41,44 +38,29 @@ public class ControladorAvatar {
     public void obtenerAvatar(int idUser, DatosCallback callback){
         executor.execute(()->{
             AvatarUsuario avatar = avatarDao.obtenerAvatarPorUsuario(idUser);
-            //if(avatar != null){
-              //  callback.onLoaded(avatar);
-            //}
-
+            // FIX: Siempre llamar al callback, incluso si es null
+            callback.onLoaded(avatar);
+            
             if (avatar != null) {
-                Log.d("DB_TEST", "Avatar encontrado. Oro: " + avatar.oro);
-                callback.onLoaded(avatar);
+                Log.d("DB_TEST", "Avatar encontrado: " + avatar.avatar_name);
             } else {
-                Log.e("DB_TEST", "No se encontró avatar para el ID: " + idUser);
-                // Si entra aquí, el problema es que el avatar no se creó en el registro
+                Log.e("DB_TEST", "No se encontró avatar para el ID usuario: " + idUser);
             }
         });
     }
 
     public void modificarHP(AvatarUsuario avatar, int cambioHP, DatosCallback callback){
         executor.execute(()->{
-            int nuevahp;
-            nuevahp = avatar.hp + cambioHP;
-
-            //No permitir que la HP sea negativa
-            if(nuevahp > 0){
-                avatar.hp = nuevahp;
-            }else{
-                avatar.hp = 0;
-            }
-
+            int nuevahp = avatar.hp + cambioHP;
+            avatar.hp = Math.max(0, nuevahp);
             avatarDao.actualizarProgreso(avatar);
-
             callback.onLoaded(avatar);
         });
     }
 
-    public  void modificarXP(AvatarUsuario avatar, int cambioXP, DatosCallback callback){
+    public void modificarXP(AvatarUsuario avatar, int cambioXP, DatosCallback callback){
         executor.execute(()->{
-            int nuevaXP;
-            nuevaXP = avatar.xp + cambioXP;
-
-            //Reiniciar la cuenta de XP
+            int nuevaXP = avatar.xp + cambioXP;
             if(nuevaXP >= 100){
                 avatar.xp = (nuevaXP - 100);
                 avatar.nivel++;
@@ -86,7 +68,6 @@ public class ControladorAvatar {
                 avatar.xp = nuevaXP;
             }
             avatarDao.actualizarProgreso(avatar);
-
             callback.onLoaded(avatar);
         });
     }
@@ -97,7 +78,6 @@ public class ControladorAvatar {
 
     public interface RegistroCallback{
         void onSuccess();
-
         void onError(String error);
     }
 }
