@@ -3,19 +3,18 @@ package com.example.levelupdaily;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
+
+import java.util.List;
 
 @Dao
 public interface SubMisionDAO {
+
     @Insert
-    void guardarSubMision(SubMision subMision);
+    void insertarSubtarea(SubMision subMision);
 
-    @Query("SELECT * FROM submisiones WHERE id_mision = :misionID")
-    SubMision obtenerSubMisionesPorMision(int misionID);
+    @Query("SELECT * FROM subMisiones WHERE id_mision = :idMision")
+    List<SubMision> obtenerSubmisiones(int idMision);
 
-    @Query("SELECT * FROM submisiones WHERE id_submision = :submisionID")
-    SubMision obtenerSubMisionPorID(int submisionID);
-
-    @Update
-    void actualizarEstado(SubMision subMision);
+    @Query("UPDATE submisiones SET completada = 1 WHERE id_submisiones = :idSubmision")
+    void completarSubmision(int idSubmision);
 }

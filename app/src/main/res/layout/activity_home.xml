@@ -1,137 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:background="#1A1A2E">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="50sp" />
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/iAvatar"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center"
-            tools:srcCompat="@tools:sample/avatars" />
-
-        <TextView
-            android:id="@+id/tNombreAvatar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="5sp"
-            android:text="Defaul Name"
-            android:textSize="20dp" />
+            android:orientation="vertical"
+            android:padding="12dp">
 
-        <TextView
-            android:id="@+id/tHP"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="5sp"
-            android:text="HP:" />
+            <!-- TITULO -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="LEVEL UP DAILY"
+                android:textAlignment="center"
+                android:textColor="#F8F8F2"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:padding="10dp"
+                android:background="#16213E"/>
 
-        <TextView
-            android:id="@+id/tOro"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="5sp"
-            android:text="Oro:" />
+            <!-- AVATAR -->
+            <ImageView
+                android:id="@+id/iAvatar"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="#0F3460"
+                android:padding="6dp"
+                tools:srcCompat="@tools:sample/avatars"/>
 
-        <TextView
-            android:id="@+id/tNivel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="5sp"
-            android:text="Nivel:" />
+            <!-- NOMBRE -->
+            <TextView
+                android:id="@+id/tNombreAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="HERO"
+                android:textAlignment="center"
+                android:textColor="#FFD369"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:padding="10dp"/>
 
-        <TextView
-            android:id="@+id/tXP"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="5sp"
-            android:text="XP:" />
+            <!-- STATS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#16213E"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp">
 
-        <!--Inicio de interfaz de prueba-->
-        <!--
-        <Button
-            android:id="@+id/btnHP"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Restar HP" />
+                <TextView
+                    android:id="@+id/tHP"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="HP: 100"
+                    android:textColor="#FF4C4C"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:padding="4dp"/>
 
-        <Button
-            android:id="@+id/btnXP"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Agregar XP" />
-        -->
-        <!--Fin de interfaz de prueba-->
+                <TextView
+                    android:id="@+id/tOro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ORO: 0"
+                    android:textColor="#FFD369"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:padding="4dp"/>
 
-    </LinearLayout>
-    <ImageButton
-        android:id="@+id/conf"
-        android:layout_width="75dp"
-        android:layout_height="60dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/config"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.729"
-        app:layout_constraintVertical_bias="0.57" />
+                <TextView
+                    android:id="@+id/tNivel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="NIVEL: 1"
+                    android:textColor="#6BCB77"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:padding="4dp"/>
 
-    <ImageButton
-        android:id="@+id/mision"
-        android:layout_width="88dp"
-        android:layout_height="75dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/mis"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.244"
-        app:layout_constraintVertical_bias="0.569" />
-    <ImageButton
-        android:id="@+id/btnAbrirInventario"
-        android:layout_width="88dp"
-        android:layout_height="75dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/ic_inventory"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0.88" />
+                <TextView
+                    android:id="@+id/tXP"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="XP: 0"
+                    android:textColor="#4D96FF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:padding="4dp"/>
 
-    <ImageButton
-        android:id="@+id/store"
-        android:layout_width="88dp"
-        android:layout_height="75dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/store"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
-        app:layout_constraintVertical_bias="0.745" />
+            </LinearLayout>
+
+            <!-- BOTON -->
+            <Button
+                android:id="@+id/btnCrearMision"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="➕ NUEVA MISIÓN"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:backgroundTint="#E94560"
+                android:padding="12dp"/>
+
+            <!-- PRINCIPALES -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚔ MISIONES PRINCIPALES"
+                android:textColor="#FFD369"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:paddingTop="18dp"
+                android:paddingBottom="8dp"/>
+
+            <ExpandableListView
+                android:id="@+id/listaPrincipales"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="#0F3460"
+                android:divider="#FFD369"
+                android:dividerHeight="2dp"/>
+
+            <!-- SECUNDARIAS -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🛡 MISIONES SECUNDARIAS"
+                android:textColor="#6BCB77"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:paddingTop="18dp"
+                android:paddingBottom="8dp"/>
+
+            <ExpandableListView
+                android:id="@+id/listaSecundarias"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="#0F3460"
+                android:divider="#6BCB77"
+                android:dividerHeight="2dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

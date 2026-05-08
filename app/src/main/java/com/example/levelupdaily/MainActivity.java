@@ -36,7 +36,5 @@ public class MainActivity extends AppCompatActivity {
     private void Registrar(){
         Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
         startActivity(intent);
-        finish();
     }
-
 }

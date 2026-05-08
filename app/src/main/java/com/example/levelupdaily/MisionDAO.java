@@ -3,8 +3,6 @@ package com.example.levelupdaily;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Transaction;
-import androidx.room.Update;
 
 import java.util.List;
 
@@ -12,23 +10,17 @@ import java.util.List;
 public interface MisionDAO {
 
     @Insert
-    long guardarMision(Mision mision);
+    long insertarMision(Mision mision);
 
-    @Transaction
-    default void insertarMisionConSubmisiones(Mision mision, List<SubMision> subs, SubMisionDAO subMisionDAO){
-        long id = guardarMision(mision);
-        for (SubMision s : subs){
-            s.id_mision = (int) id;
-            subMisionDAO.guardarSubMision(s);
-        }
-    }
+    @Query("SELECT * FROM misiones WHERE id_usuario = :idUsuario")
+    List<Mision> obtenerMisiones(int idUsuario);
 
-    @Query("SELECT * FROM misiones WHERE id_usuario = :userID")
-    Mision obtenerMisionesPorUsuario(int userID);
+    @Query("UPDATE misiones SET completada = 1 WHERE id = :idMision")
+    void completarMision(int idMision);
 
-    @Query("SELECT * FROM misiones WHERE id_mision = :misionID")
-    Mision obtnerMisionPorID(int misionID);
+    @Query(" SELECT * FROM misiones WHERE tipo = 'Principal' AND id_usuario = :idUsuario")
+    List<Mision> obtenerPrincipales(int idUsuario);
 
-    @Update
-    void cerrarMision(Mision mision);
+    @Query("SELECT * FROM misiones WHERE tipo = 'Secundaria' AND id_usuario = :idUsuario")
+    List<Mision> obtenerSecundarias(int idUsuario);
 }

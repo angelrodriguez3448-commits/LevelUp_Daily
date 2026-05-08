@@ -20,7 +20,7 @@ public class ControladorMision {
     public void guardarMision(Mision mision, List<SubMision> submisiones, CrearCallback callback){
         executor.execute(()->{
             try{
-                misionDAO.insertarMisionConSubmisiones(mision, submisiones, subMisionDAO);
+                misionDAO.insertarMision(mision);
 
                 callback.onSuccess();
             } catch (Exception e) {

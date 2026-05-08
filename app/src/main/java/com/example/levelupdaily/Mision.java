@@ -17,16 +17,67 @@ import java.util.Date;
 )
 
 public class Mision {
+
     @PrimaryKey(autoGenerate = true)
-    public int id_mision;
+    private int id;
 
-    public int id_usuario; //FK
+    public int id_usuario;
 
-    public String titulo;
+    private String titulo;
+    private String tipo;
+    private String fechaLimite;
+    private boolean completada;
 
-    public String descripcion;
+    public Mision(
+            int id_usuario,
+            String titulo,
+            String tipo,
+            String fechaLimite,
+            boolean completada
+    ) {
 
-    public Boolean estado; //False = sin cerrar y True = cerrada
+        this.id_usuario = id_usuario;
+        this.titulo = titulo;
+        this.tipo = tipo;
+        this.fechaLimite = fechaLimite;
+        this.completada = completada;
+    }
 
-    public Date fecha_limite;
+    public int getId() {
+        return id;
+    }
+
+    public int getId_usuario() {
+        return id_usuario;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public String getFechaLimite() {
+        return fechaLimite;
+    }
+
+    public boolean isCompletada() {
+        return completada;
+    }
+
+    @Override
+    public String toString() {
+
+        if(completada) {
+            return "? " + titulo;
+        }
+
+        return titulo + " - " + tipo;
+    }
 }

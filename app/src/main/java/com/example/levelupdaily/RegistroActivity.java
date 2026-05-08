@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class RegistroActivity extends AppCompatActivity {
     private EditText etNombre, etPassword;
     private Button btnRegistrar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -20,36 +22,36 @@ public class RegistroActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.EditPassword);
         btnRegistrar = findViewById(R.id.btnRegistro);
 
-        btnRegistrar.setOnClickListener(v -> registrarUsuario());
+        btnRegistrar.setOnClickListener(v->registrarUsuario());
     }
 
     private void registrarUsuario() {
         ControladorRegistro control = new ControladorRegistro(getApplication());
-        String nombre = etNombre.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
+        String nombre = etNombre.getText().toString();
+        String password = etPassword.getText().toString();
 
         if(nombre.isEmpty() || password.isEmpty()){
             Toast.makeText(this, "Por favor llene todos los campos", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        control.registrarUsuario(nombre, password, new ControladorRegistro.RegistroCallback() {
-            @Override
-            public void onSuccess(long id) {
-                runOnUiThread(() -> {
-                    Toast.makeText(RegistroActivity.this, "Usuario creado con éxito", Toast.LENGTH_SHORT).show();
+        } else{
+            control.registrarUsuario(nombre, password, new ControladorRegistro.RegistroCallback() {
+                @Override
+                public void onSuccess(long id) {
+                    runOnUiThread(()->{
+                        Toast.makeText(RegistroActivity.this, "Usuario creado", Toast.LENGTH_SHORT).show();
+                    });
                     Intent intent = new Intent(RegistroActivity.this, AvatarRActivity.class);
-                    // Pasamos el ID como long explícitamente
                     intent.putExtra("id_usuario", id);
                     startActivity(intent);
-                    finish(); // Cerramos registro para que no pueda volver atrás
-                });
-            }
+                    finish();
+                }
 
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> Toast.makeText(RegistroActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show());
-            }
-        });
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(()->{
+                        Toast.makeText(RegistroActivity.this, "Error:" + error, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
+        }
     }
 }

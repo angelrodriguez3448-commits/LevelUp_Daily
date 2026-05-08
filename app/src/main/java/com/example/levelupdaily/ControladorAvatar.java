@@ -23,11 +23,13 @@ public class ControladorAvatar {
                 nuevoAva.avatar_name = nombre;
                 nuevoAva.imagen = uriAva;
                 nuevoAva.hp = 100;
-                nuevoAva.oro = 200; // Iniciamos con 200 de oro
+                nuevoAva.oro = 25;
                 nuevoAva.xp = 0;
                 nuevoAva.nivel = 1;
 
                 avatarDao.registrarAvatar(nuevoAva);
+
+                //Notificar exito
                 callback.onSuccess();
             } catch (Exception e) {
                 callback.onError(e.getMessage());
