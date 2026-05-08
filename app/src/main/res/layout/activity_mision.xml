@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A2E">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <!-- TITULO -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NUEVA MISIÓN"
+            android:textColor="#FFD369"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:shadowColor="#000000"
+            android:shadowDx="4"
+            android:shadowDy="4"
+            android:shadowRadius="2"/>
+
+        <!-- SUBTITULO -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CREATE YOUR NEXT QUEST"
+            android:textColor="#F1F1F1"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:paddingBottom="25dp"/>
+
+        <!-- PANEL -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#16213E"
+            android:padding="18dp">
+
+            <!-- TITULO MISION -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TÍTULO"
+                android:textColor="#FFD369"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/etTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ejemplo: Hacer la cena"
+                android:textColorHint="#AAAAAA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:background="#0F3460"
+                android:padding="12dp"/>
+
+            <!-- ESPACIO -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="18dp"/>
+
+            <!-- TIPO -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TIPO DE MISIÓN"
+                android:textColor="#FFD369"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingBottom="8dp"/>
+
+            <Spinner
+                android:id="@+id/spTipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#0F3460"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="18dp"/>
+
+
+
+            <!-- ESPACIO -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="18dp"/>
+
+            <!-- SUBTAREAS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SUBTAREAS"
+                android:textColor="#FFD369"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/etSubtareas"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:gravity="top"
+                android:hint="Una subtarea por línea"
+                android:textColorHint="#AAAAAA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:background="#0F3460"
+                android:padding="12dp"
+                android:inputType="textMultiLine"/>
+
+            <!-- ESPACIO -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="18dp"/>
+
+            <!-- FECHA -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FECHA LÍMITE"
+                android:textColor="#FFD369"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnFecha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccionar fecha"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#0F3460"/>
+
+
+
+        </LinearLayout>
+
+        <!-- ESPACIO -->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp"/>
+
+        <!-- BOTON -->
+        <Button
+            android:id="@+id/btnGuardar"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:text="GUARDAR MISIÓN"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:backgroundTint="#E94560"
+            android:padding="14dp"/>
+
+        <!-- TEXTO -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A NEW QUEST HAS APPEARED"
+            android:textColor="#AAAAAA"
+            android:textStyle="italic"
+            android:textSize="12sp"
+            android:paddingTop="20dp"/>
+
+    </LinearLayout>
+
+</ScrollView>
