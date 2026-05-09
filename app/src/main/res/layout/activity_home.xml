@@ -61,32 +61,15 @@
                 android:padding="12dp"
                 android:layout_marginBottom="12dp">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tHP"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:id="@+id/tHP"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="HP: 100"
-                        android:textColor="#FF4C4C"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:padding="4dp"/>
-
-                    <ImageView
-                        android:id="@+id/imgShieldActive"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginStart="8dp"
-                        android:src="@android:drawable/ic_lock_idle_lock"
-                        android:visibility="gone"
-                        app:tint="#4D96FF"
-                        tools:visibility="visible"/>
-                </LinearLayout>
+                    android:text="HP: 100"
+                    android:textColor="#FF4C4C"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:padding="4dp"/>
 
                 <TextView
                     android:id="@+id/tOro"
@@ -120,7 +103,7 @@
 
             </LinearLayout>
 
-            <!-- BOTONES -->
+            <!-- BOTON -->
             <Button
                 android:id="@+id/btnCrearMision"
                 android:layout_width="match_parent"
@@ -141,22 +124,9 @@
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:backgroundTint="#E94560"
-                android:padding="12dp"
-                android:layout_marginTop="8dp"/>
+                android:padding="12dp"/>
 
-            <Button
-                android:id="@+id/btnInventario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📦 INVENTARIO"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:backgroundTint="#E94560"
-                android:padding="12dp"
-                android:layout_marginTop="8dp"/>
-
-            <!-- MISIONES -->
+            <!-- PRINCIPALES -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -175,6 +145,7 @@
                 android:divider="#FFD369"
                 android:dividerHeight="2dp"/>
 
+            <!-- SECUNDARIAS -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

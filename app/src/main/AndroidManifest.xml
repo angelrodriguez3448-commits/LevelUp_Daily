@@ -29,6 +29,7 @@
         <activity android:name=".ConfiguracionActivity" android:exported="false" />
         <activity android:name=".StoreActivity" android:exported="false" />
         <activity android:name=".InventarioActivity" android:exported="false" />
+        <activity android:name=".HistorialActivity" android:exported="false" />
 
     </application>
 </manifest>

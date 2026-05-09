@@ -28,6 +28,8 @@ public class MisionActivity extends AppCompatActivity {
 
     private AppDatabase db;
 
+    private ControladorMision controladorMision;
+
     private int userID;
 
     @Override
@@ -46,6 +48,8 @@ public class MisionActivity extends AppCompatActivity {
         btnGuardar = findViewById(R.id.btnGuardar);
 
         db = AppDatabase.getDatabase(this);
+
+        controladorMision = new ControladorMision(getApplication());
 
         //Tipos de misión
         String[] tipos = {
@@ -217,41 +221,19 @@ public class MisionActivity extends AppCompatActivity {
                         false
                 );
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-
-            //Guardar misi�n
-            long idMision =
-                    db.misionDAO()
-                            .insertarMision(
-                                    nuevaMision
-                            );
-
-            //Guardar subtareas
-            for(String texto : listaLimpia) {
-
-                SubMision submision =
-                        new SubMision(
-                                (int) idMision,
-                                texto,
-                                false
-                        );
-
-                db.subMisionDAO()
-                        .insertarSubtarea(
-                                submision
-                        );
+        controladorMision.guardarMisionConSubmisiones(nuevaMision, listaLimpia, new ControladorMision.CrearCallback() {
+            @Override
+            public void onSuccess() {
+                runOnUiThread(() -> {
+                    Toast.makeText(MisionActivity.this, "Misión creada con éxito", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
             }
 
-            runOnUiThread(() -> {
-
-                Toast.makeText(
-                        this,
-                        "Misi�n creada",
-                        Toast.LENGTH_SHORT
-                ).show();
-
-                finish();
-            });
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MisionActivity.this, "Error: " + error, Toast.LENGTH_LONG).show());
+            }
         });
     }
 }

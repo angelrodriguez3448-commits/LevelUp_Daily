@@ -10,7 +10,7 @@ import java.util.List;
 public interface SubMisionDAO {
 
     @Insert
-    void insertarSubtarea(SubMision subMision);
+    void insertarSubmision(SubMision subMision);
 
     @Query("SELECT * FROM subMisiones WHERE id_mision = :idMision")
     List<SubMision> obtenerSubmisiones(int idMision);
