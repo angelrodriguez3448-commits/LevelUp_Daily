@@ -20,7 +20,7 @@ public class HomeActivity extends AppCompatActivity {
     private ExpandableListView listaPrincipales;
     private ExpandableListView listaSecundarias;
 
-    private Button btnCrearMision, btnTienda;
+    private Button btnCrearMision, btnTienda, btnInventario, btnHistorial;
 
     private TextView tNombreAvatar;
     private TextView tHP;
@@ -45,6 +45,10 @@ public class HomeActivity extends AppCompatActivity {
         btnCrearMision = findViewById(R.id.btnCrearMision);
 
         btnTienda = findViewById(R.id.btnTienda);
+
+        btnInventario = findViewById(R.id.btnInventario);
+
+        btnHistorial = findViewById(R.id.btnHistorial);
 
         tNombreAvatar = findViewById(R.id.tNombreAvatar);
 
@@ -79,6 +83,18 @@ public class HomeActivity extends AppCompatActivity {
 
             intent.putExtra("id_usuario", userID);
 
+            startActivity(intent);
+        });
+
+        btnInventario.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, InventarioActivity.class);
+            intent.putExtra("id_usuario", userID);
+            startActivity(intent);
+        });
+
+        btnHistorial.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, HistorialActivity.class);
+            intent.putExtra("id_usuario", userID);
             startActivity(intent);
         });
 

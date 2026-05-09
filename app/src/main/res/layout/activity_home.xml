@@ -126,6 +126,28 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/btnInventario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#E94560"
+                android:padding="12dp"
+                android:text="🎒 INVENTARIO"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnHistorial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#E94560"
+                android:padding="12dp"
+                android:text="📜 SALÓN DE LA GLORIA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
             <!-- PRINCIPALES -->
             <TextView
                 android:layout_width="match_parent"
