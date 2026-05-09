@@ -1,145 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1A1A2E">
+    android:background="@color/bg_dark">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="INICIA SESIÓN"
+            android:textColor="@color/gold_text"
+            android:textSize="38sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="LOG IN TO YOUR ADVENTURE"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="40dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/input_container_bg"
             android:orientation="vertical"
-            android:gravity="center_horizontal"
             android:padding="24dp">
 
-            <!-- ESPACIO -->
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="30dp"/>
-
-            <!-- TITULO -->
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="LOGIN"
-                android:textColor="#FFD369"
-                android:textSize="38sp"
-                android:textStyle="bold"
-                android:shadowColor="#000000"
-                android:shadowDx="4"
-                android:shadowDy="4"
-                android:shadowRadius="2"/>
-
-            <!-- SUBTITULO -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ENTER THE DUNGEON"
-                android:textColor="#F1F1F1"
-                android:textSize="14sp"
+                android:text="NOMBRE DE USUARIO"
+                android:textColor="@color/gold_text"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                android:paddingBottom="30dp"/>
+                android:layout_marginBottom="8dp" />
 
-            <!-- PANEL -->
-            <LinearLayout
+            <EditText
+                android:id="@+id/EditNombre"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#16213E"
-                android:padding="18dp">
+                android:layout_height="55dp"
+                android:background="@color/input_field_bg"
+                android:hint="Ingresa tu usuario"
+                android:textColorHint="#5A6C8D"
+                android:textColor="@color/white"
+                android:paddingStart="16dp"
+                android:inputType="text"
+                android:layout_marginBottom="24dp" />
 
-                <!-- USUARIO -->
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="USUARIO"
-                    android:textColor="#FFD369"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:paddingBottom="8dp"/>
-
-                <EditText
-                    android:id="@+id/EditNombre"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Nombre de usuario"
-                    android:textColorHint="#AAAAAA"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:padding="12dp"
-                    android:background="#0F3460"
-                    android:inputType="text"/>
-
-                <!-- ESPACIO -->
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"/>
-
-                <!-- PASSWORD -->
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="CONTRASEÑA"
-                    android:textColor="#FFD369"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:paddingBottom="8dp"/>
-
-                <EditText
-                    android:id="@+id/EditPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Contraseña"
-                    android:textColorHint="#AAAAAA"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:padding="12dp"
-                    android:background="#0F3460"
-                    android:inputType="textPassword"/>
-
-            </LinearLayout>
-
-            <!-- ESPACIO -->
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="30dp"/>
-
-            <!-- BOTON -->
-            <Button
-                android:id="@+id/btnLogin"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:text="▶ ENTRAR"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:backgroundTint="#E94560"
-                android:padding="14dp"/>
-
-            <!-- ESPACIO -->
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="20dp"/>
-
-            <!-- TEXTO -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="READY TO LEVEL UP?"
-                android:textColor="#AAAAAA"
-                android:textStyle="italic"
-                android:textSize="12sp"/>
+                android:text="CONTRASEÑA"
+                android:textColor="@color/gold_text"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
 
+            <EditText
+                android:id="@+id/EditPassword"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@color/input_field_bg"
+                android:hint="Ingresa tu contraseña"
+                android:textColorHint="#5A6C8D"
+                android:textColor="@color/white"
+                android:paddingStart="16dp"
+                android:inputType="textPassword" />
         </LinearLayout>
 
-    </ScrollView>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/button_style"
+            android:text="⚔  FINALIZAR"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="RETURNING HERO"
+            android:textColor="#555555"
+            android:textSize="11sp"
+            android:textStyle="italic" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="bg_dark">#1A1C2C</color>
+    <color name="input_container_bg">#121D31</color>
+    <color name="input_field_bg">#1D2E4D</color>
+    <color name="gold_text">#F4D06F</color>
+    <color name="button_red">#EF5366</color>
 </resources>

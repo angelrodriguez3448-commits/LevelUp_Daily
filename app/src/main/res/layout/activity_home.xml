@@ -21,13 +21,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#16213E"
+                android:padding="10dp"
                 android:text="LEVEL UP DAILY"
                 android:textAlignment="center"
                 android:textColor="#F8F8F2"
                 android:textSize="28sp"
-                android:textStyle="bold"
-                android:padding="10dp"
-                android:background="#16213E"/>
+                android:textStyle="bold" />
 
             <!-- AVATAR -->
             <ImageView
@@ -38,68 +38,68 @@
                 android:layout_marginTop="15dp"
                 android:background="#0F3460"
                 android:padding="6dp"
-                tools:srcCompat="@tools:sample/avatars"/>
+                tools:srcCompat="@tools:sample/avatars" />
 
             <!-- NOMBRE -->
             <TextView
                 android:id="@+id/tNombreAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:text="HERO"
                 android:textAlignment="center"
                 android:textColor="#FFD369"
                 android:textSize="24sp"
-                android:textStyle="bold"
-                android:padding="10dp"/>
+                android:textStyle="bold" />
 
             <!-- STATS -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginBottom="12dp"
                 android:background="#16213E"
-                android:padding="12dp"
-                android:layout_marginBottom="12dp">
+                android:orientation="vertical"
+                android:padding="12dp">
 
                 <TextView
                     android:id="@+id/tHP"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:text="HP: 100"
                     android:textColor="#FF4C4C"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:padding="4dp"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tOro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:text="ORO: 0"
                     android:textColor="#FFD369"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:padding="4dp"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tNivel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:text="NIVEL: 1"
                     android:textColor="#6BCB77"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:padding="4dp"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tXP"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:text="XP: 0"
                     android:textColor="#4D96FF"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:padding="4dp"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -108,34 +108,34 @@
                 android:id="@+id/btnCrearMision"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="#E94560"
+                android:padding="12dp"
                 android:text="➕ NUEVA MISIÓN"
-                android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:backgroundTint="#E94560"
-                android:padding="12dp"/>
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnTienda"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="#E94560"
+                android:padding="12dp"
                 android:text="💰 IR AL MERCADO"
-                android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:backgroundTint="#E94560"
-                android:padding="12dp"/>
+                android:textStyle="bold" />
 
             <!-- PRINCIPALES -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingTop="18dp"
+                android:paddingBottom="8dp"
                 android:text="⚔ MISIONES PRINCIPALES"
                 android:textColor="#FFD369"
-                android:textStyle="bold"
                 android:textSize="20sp"
-                android:paddingTop="18dp"
-                android:paddingBottom="8dp"/>
+                android:textStyle="bold" />
 
             <ExpandableListView
                 android:id="@+id/listaPrincipales"
@@ -143,18 +143,18 @@
                 android:layout_height="250dp"
                 android:background="#0F3460"
                 android:divider="#FFD369"
-                android:dividerHeight="2dp"/>
+                android:dividerHeight="2dp" />
 
             <!-- SECUNDARIAS -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingTop="18dp"
+                android:paddingBottom="8dp"
                 android:text="🛡 MISIONES SECUNDARIAS"
                 android:textColor="#6BCB77"
-                android:textStyle="bold"
                 android:textSize="20sp"
-                android:paddingTop="18dp"
-                android:paddingBottom="8dp"/>
+                android:textStyle="bold" />
 
             <ExpandableListView
                 android:id="@+id/listaSecundarias"
@@ -162,7 +162,7 @@
                 android:layout_height="250dp"
                 android:background="#0F3460"
                 android:divider="#6BCB77"
-                android:dividerHeight="2dp"/>
+                android:dividerHeight="2dp" />
 
         </LinearLayout>
 
