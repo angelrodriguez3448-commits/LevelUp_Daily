@@ -103,6 +103,7 @@ public class HomeActivity extends AppCompatActivity {
         if(extras != null){
             userID = extras.getInt("id_usuario");
         }
+
         //CLICK SUBTAREAS PRINCIPALES
         listaPrincipales.setOnChildClickListener(
                 (parent, v, groupPosition,
@@ -136,8 +137,30 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        verificarPenalizaciones();
         cargarMisiones();
         cargarAvatar();
+    }
+
+    private void verificarPenalizaciones() {
+        controladorMision.verificarMisionesVencidas(userID, System.currentTimeMillis(), new ControladorMision.PenalizacionCallback() {
+            @Override
+            public void onPenalizacionAplicada(int danio, int cantidadMisiones) {
+                controladorAvatar.recibirDanio(userID, danio, avatar -> {
+                    runOnUiThread(() -> {
+                        Toast.makeText(HomeActivity.this, 
+                            "¡Has perdido " + danio + " HP por " + cantidadMisiones + " misiones vencidas!", 
+                            Toast.LENGTH_LONG).show();
+                        cargarAvatar();
+                    });
+                });
+            }
+
+            @Override
+            public void onSinMisionesVencidas() {
+                // No hacer nada
+            }
+        });
     }
 
     private void cargarMisiones() {

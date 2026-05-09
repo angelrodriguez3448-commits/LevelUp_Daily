@@ -25,4 +25,10 @@ public interface MisionDAO {
 
     @Query("SELECT * FROM misiones WHERE tipo = 'Secundaria' AND id_usuario = :idUsuario AND completada = 0")
     List<Mision> obtenerSecundariasActivas(int idUsuario);
+
+    @Query("SELECT * FROM misiones WHERE id_usuario = :idUsuario AND completada = 0 AND fechaLimite < :currentDate")
+    List<Mision> obtenerMisionesVencidas(int idUsuario, long currentDate);
+
+    @Query("DELETE FROM misiones WHERE id = :idMision")
+    void eliminarMision(int idMision);
 }

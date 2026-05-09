@@ -94,6 +94,21 @@ public class ControladorMision {
         });
     }
 
+    public void verificarMisionesVencidas(int userId, long currentTime, PenalizacionCallback callback) {
+        executor.execute(() -> {
+            List<Mision> vencidas = misionDAO.obtenerMisionesVencidas(userId, currentTime);
+            if (!vencidas.isEmpty()) {
+                int danioTotal = vencidas.size() * 10;
+                for (Mision m : vencidas) {
+                    misionDAO.eliminarMision(m.getId());
+                }
+                callback.onPenalizacionAplicada(danioTotal, vencidas.size());
+            } else {
+                callback.onSinMisionesVencidas();
+            }
+        });
+    }
+
     // Interfaces de callback
 
     public interface CrearCallback{
@@ -119,5 +134,10 @@ public class ControladorMision {
 
     public interface HistorialCallback{
         void onHistorialCargado(List<Mision> misionesCompletadas);
+    }
+
+    public interface PenalizacionCallback {
+        void onPenalizacionAplicada(int danio, int cantidadMisiones);
+        void onSinMisionesVencidas();
     }
 }
