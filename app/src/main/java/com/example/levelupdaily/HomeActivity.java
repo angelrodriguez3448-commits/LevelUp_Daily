@@ -11,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.HashMap;
 import java.util.List;
 
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity {
@@ -20,7 +22,8 @@ public class HomeActivity extends AppCompatActivity {
     private ExpandableListView listaPrincipales;
     private ExpandableListView listaSecundarias;
 
-    private Button btnCrearMision, btnTienda, btnInventario, btnHistorial;
+    private Button btnCrearMision, btnTienda, btnInventario, btnHistorial, btnTestMorir, btnTestCurar, btnTestOro;
+    private LinearLayout layoutDev;
 
     private TextView tNombreAvatar;
     private TextView tHP;
@@ -32,6 +35,8 @@ public class HomeActivity extends AppCompatActivity {
 
     //Temporal
     private int userID;
+    private int clicsAvatar = 0;
+    private boolean modoDeveloper = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,11 @@ public class HomeActivity extends AppCompatActivity {
 
         btnHistorial = findViewById(R.id.btnHistorial);
 
+        btnTestMorir = findViewById(R.id.btnTestMorir);
+        btnTestCurar = findViewById(R.id.btnTestCurar);
+        btnTestOro = findViewById(R.id.btnTestOro);
+        layoutDev = findViewById(R.id.layoutDev);
+
         tNombreAvatar = findViewById(R.id.tNombreAvatar);
 
         tHP = findViewById(R.id.tHP);
@@ -63,6 +73,16 @@ public class HomeActivity extends AppCompatActivity {
         iAvatar = findViewById(R.id.iAvatar);
 
         db = AppDatabase.getDatabase(this);
+
+        iAvatar.setOnClickListener(v -> {
+            clicsAvatar++;
+            if (clicsAvatar >= 10) {
+                clicsAvatar = 0;
+                modoDeveloper = !modoDeveloper;
+                layoutDev.setVisibility(modoDeveloper ? View.VISIBLE : View.GONE);
+                Toast.makeText(this, modoDeveloper ? "Modo Desarrollador Activo" : "Modo Desarrollador Desactivado", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         btnCrearMision.setOnClickListener(v -> {
 
@@ -96,6 +116,54 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(HomeActivity.this, HistorialActivity.class);
             intent.putExtra("id_usuario", userID);
             startActivity(intent);
+        });
+
+        btnTestMorir.setOnClickListener(v -> {
+            controladorAvatar.obtenerAvatar(userID, avatarAntes -> {
+                controladorAvatar.recibirDanio(userID, 100, avatarDespues -> {
+                    runOnUiThread(() -> {
+                        if (avatarAntes.hp > 0 && avatarDespues.hp == 50) {
+                            int oroPerdido = (int) (avatarAntes.oro * 0.30);
+                            Toast.makeText(HomeActivity.this,
+                                    "¡PRUEBA: DERROTA! Perdiste " + oroPerdido + " de oro.",
+                                    Toast.LENGTH_LONG).show();
+                        } else if (avatarAntes.tiene_escudo) {
+                            Toast.makeText(HomeActivity.this,
+                                    "¡PRUEBA: Escudo activado! No moriste.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(HomeActivity.this,
+                                    "¡PRUEBA: 100 Daño recibido!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        cargarAvatar();
+                    });
+                });
+            });
+        });
+
+        btnTestCurar.setOnClickListener(v -> {
+            controladorAvatar.obtenerAvatar(userID, avatar -> {
+                if (avatar != null) {
+                    avatar.hp = 100;
+                    AppDatabase.databaseWriteExecutor.execute(() -> {
+                        db.avatarDao().actualizarProgreso(avatar);
+                        runOnUiThread(() -> {
+                            Toast.makeText(this, "¡Vida restaurada!", Toast.LENGTH_SHORT).show();
+                            cargarAvatar();
+                        });
+                    });
+                }
+            });
+        });
+
+        btnTestOro.setOnClickListener(v -> {
+            controladorAvatar.procesarRecompensa(userID, 100, 0, avatar -> {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "¡+100 Oro obtenido!", Toast.LENGTH_SHORT).show();
+                    cargarAvatar();
+                });
+            });
         });
 
         Bundle extras = getIntent().getExtras();
@@ -146,12 +214,23 @@ public class HomeActivity extends AppCompatActivity {
         controladorMision.verificarMisionesVencidas(userID, System.currentTimeMillis(), new ControladorMision.PenalizacionCallback() {
             @Override
             public void onPenalizacionAplicada(int danio, int cantidadMisiones) {
-                controladorAvatar.recibirDanio(userID, danio, avatar -> {
-                    runOnUiThread(() -> {
-                        Toast.makeText(HomeActivity.this, 
-                            "¡Has perdido " + danio + " HP por " + cantidadMisiones + " misiones vencidas!", 
-                            Toast.LENGTH_LONG).show();
-                        cargarAvatar();
+                // Guardar HP antes del daño para comparar
+                controladorAvatar.obtenerAvatar(userID, avatarAntes -> {
+                    controladorAvatar.recibirDanio(userID, danio, avatarDespues -> {
+                        runOnUiThread(() -> {
+                            if (avatarAntes.hp > 0 && avatarDespues.hp == 50 && danio > 0) {
+                                // Esto indica que hubo una derrota y reset de HP
+                                int oroPerdido = (int) (avatarAntes.oro * 0.30);
+                                Toast.makeText(HomeActivity.this,
+                                        "¡DERROTA! Has caído en combate. Perdiste " + oroPerdido + " de oro.",
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(HomeActivity.this,
+                                        "¡Has perdido " + danio + " HP por " + cantidadMisiones + " misiones vencidas!",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                            cargarAvatar();
+                        });
                     });
                 });
             }

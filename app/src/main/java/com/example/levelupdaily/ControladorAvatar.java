@@ -70,12 +70,25 @@ public class ControladorAvatar {
                     Log.d("Avatar", "El escudo absorbió el impacto.");
                 } else {
                     avatar.hp -= danio;
-                    if (avatar.hp < 0) avatar.hp = 0;
+                    if (avatar.hp <= 0) {
+                        avatar.hp = 0;
+                        procesarDerrota(avatar);
+                    }
                 }
                 avatarDao.actualizarProgreso(avatar);
                 callback.onLoaded(avatar);
             }
         });
+    }
+
+    private void procesarDerrota(AvatarUsuario avatar) {
+        // Reducir el 30% del oro
+        int oroPerdido = (int) (avatar.oro * 0.30);
+        avatar.oro -= oroPerdido;
+        if (avatar.oro < 0) avatar.oro = 0;
+
+        // Restaurar vida a 50
+        avatar.hp = 50;
     }
 
     public void usarItem(int idUser, AvatarItem item, ItemUsoCallback callback) {

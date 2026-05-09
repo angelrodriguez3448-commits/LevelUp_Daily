@@ -148,6 +148,49 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <!-- BOTONES DE MODO DESARROLLADOR -->
+            <LinearLayout
+                android:id="@+id/layoutDev"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btnTestMorir"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#2D2D2D"
+                    android:padding="8dp"
+                    android:text="☠ [DEV] RECIBIR 100 DAÑO"
+                    android:textColor="#FF4C4C"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnTestCurar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#2D2D2D"
+                    android:padding="8dp"
+                    android:text="❤ [DEV] CURAR 100 HP"
+                    android:textColor="#6BCB77"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnTestOro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#2D2D2D"
+                    android:padding="8dp"
+                    android:text="💰 [DEV] +100 ORO"
+                    android:textColor="#FFD369"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
             <!-- PRINCIPALES -->
             <TextView
                 android:layout_width="match_parent"
