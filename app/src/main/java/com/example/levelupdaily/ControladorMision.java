@@ -18,10 +18,19 @@ public class ControladorMision {
         executor =  AppDatabase.databaseWriteExecutor;
     }
 
-    public void guardarMision(Mision mision, List<SubMision> submisiones, CrearCallback callback){
+    public void guardarMisionConSubmisiones(Mision mision, List<String> submisiones, CrearCallback callback){
         executor.execute(()->{
             try{
-                misionDAO.insertarMision(mision);
+                long idMision = misionDAO.insertarMision(mision);
+
+                for(String texto: submisiones){
+                    SubMision subMision = new SubMision(
+                            (int) idMision,
+                            texto,
+                            false
+                    );
+                    subMisionDAO.insertarSubmision(subMision);
+                }
 
                 callback.onSuccess();
             } catch (Exception e) {
@@ -33,8 +42,8 @@ public class ControladorMision {
     // Nuevo metodo en ControladorMision.java
     public void cargarDatosMisiones(int userID, CargaMisionesCallback callback) {
         executor.execute(() -> {
-            List<Mision> principales = misionDAO.obtenerPrincipales(userID);
-            List<Mision> secundarias = misionDAO.obtenerSecundarias(userID);
+            List<Mision> principales = misionDAO.obtenerPrincipalesActivas(userID);
+            List<Mision> secundarias = misionDAO.obtenerSecundariasActivas(userID);
 
             HashMap<Integer, List<SubMision>> mapaPrincipales = new HashMap<>();
             HashMap<Integer, List<SubMision>> mapaSecundarias = new HashMap<>();
@@ -78,6 +87,15 @@ public class ControladorMision {
         });
     }
 
+    public void obtenerHistorial(int idUser, HistorialCallback callback){
+        executor.execute(()->{
+            List<Mision> completadas = misionDAO.obtenerHistorialMisiones(idUser);
+            callback.onHistorialCargado(completadas);
+        });
+    }
+
+    // Interfaces de callback
+
     public interface CrearCallback{
         void onSuccess();
 
@@ -97,5 +115,9 @@ public class ControladorMision {
 
     public interface SimpleCallback {
         void onDone();
+    }
+
+    public interface HistorialCallback{
+        void onHistorialCargado(List<Mision> misionesCompletadas);
     }
 }
