@@ -17,14 +17,15 @@ public class InventarioActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<ItemActividad> datos = new ArrayList<>();
     private RecyclerView.Adapter<MyViewHolder> adapter;
+    private ControladorAvatar controladorAvatar;
+    private int idUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventario);
 
-        // OBTENEMOS EL ID DEL USUARIO DESDE EL INTENT (Enviado desde HomeActivity)
-        int idUser = getIntent().getIntExtra("id_usuario", -1);
+        idUser = getIntent().getIntExtra("id_usuario", -1);
         if (idUser == -1) idUser = getIntent().getIntExtra("ID_user", -1);
 
         if (idUser == -1) {
@@ -33,10 +34,10 @@ public class InventarioActivity extends AppCompatActivity {
             return;
         }
 
+        controladorAvatar = new ControladorAvatar(getApplication());
         recyclerView = findViewById(R.id.recyclerInventario);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // 1. Definimos el adaptador de forma segura
         adapter = new RecyclerView.Adapter<MyViewHolder>() {
             @NonNull
             @Override
@@ -47,11 +48,15 @@ public class InventarioActivity extends AppCompatActivity {
 
             @Override
             public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-                ItemActividad item = datos.get(position);
-                // FIX: Validación de nulos para evitar que la app se cierre
-                if (item != null && item.item != null) {
-                    holder.tvNombre.setText(item.item.nombre);
-                    holder.tvCantidad.setText("x" + item.cantidad);
+                ItemActividad itemAct = datos.get(position);
+                if (itemAct != null && itemAct.item != null) {
+                    holder.tvNombre.setText(itemAct.item.nombre);
+                    holder.tvCantidad.setText("x" + itemAct.cantidad);
+                    
+                    // Hacer que el item sea clickable
+                    holder.itemView.setOnClickListener(v -> {
+                        usarObjeto(itemAct.item);
+                    });
                 }
             }
 
@@ -62,27 +67,32 @@ public class InventarioActivity extends AppCompatActivity {
         };
 
         recyclerView.setAdapter(adapter);
+        cargarInventario();
+    }
 
-        // 2. Cargamos los datos de Room usando el ID real del usuario
-        final int finalIdUser = idUser;
+    private void cargarInventario() {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
-            
-            // Primero buscamos el avatar que pertenece a este usuario
-            AvatarUsuario avatar = db.avatarDao().obtenerAvatarPorUsuario(finalIdUser);
-            
+            AvatarUsuario avatar = db.avatarDao().obtenerAvatarPorUsuario(idUser);
             if (avatar != null) {
-                // Obtenemos el inventario usando el ID del AVATAR real
                 List<ItemActividad> listaDB = db.inventarioDao().getInventarioPorAvatar(avatar.id_avatar);
-
                 runOnUiThread(() -> {
-                    if (listaDB != null) {
-                        datos.clear();
-                        datos.addAll(listaDB);
-                        adapter.notifyDataSetChanged();
-                    }
+                    datos.clear();
+                    if (listaDB != null) datos.addAll(listaDB);
+                    adapter.notifyDataSetChanged();
                 });
             }
+        });
+    }
+
+    private void usarObjeto(AvatarItem item) {
+        controladorAvatar.usarItem(idUser, item, (exito, mensaje) -> {
+            runOnUiThread(() -> {
+                Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
+                if (exito) {
+                    cargarInventario(); // Refrescar lista si se consumió el item
+                }
+            });
         });
     }
 

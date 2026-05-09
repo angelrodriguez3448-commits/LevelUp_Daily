@@ -4,8 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#0F3460">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,6 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nombre Item"
+            android:textColor="#FFD369"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -26,37 +28,49 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Descripción del objeto..."
-            android:textSize="14sp" />
+            android:textColor="#F8F8F2"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvPrecioTienda"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Precio: 50 Oro"
-                android:textColor="#4CAF50"
-                android:textStyle="bold" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvStockTienda"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="Stock: 5"
-                android:textColor="#757575" />
+                <TextView
+                    android:id="@+id/tvPrecioTienda"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Precio: 50 Oro"
+                    android:textColor="#FFD369"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvStockTienda"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stock: 5"
+                    android:textColor="#A0A0A0"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btnComprar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Comprar" />
+                android:text="Comprar"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#E94560"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

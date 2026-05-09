@@ -5,10 +5,8 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
-
 
 @Database(entities = {
         Usuario.class,
@@ -17,8 +15,8 @@ import java.util.concurrent.ExecutorService;
         SubMision.class,
         AvatarItem.class,
         AvatarInventario.class,
-        TiendaItem.class // Added this
-}, version = 3) // Incremented version
+        TiendaItem.class
+}, version = 25)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase{
     public abstract UsuarioDAO usuarioDao();
@@ -26,7 +24,7 @@ public abstract class AppDatabase extends RoomDatabase{
     public abstract MisionDAO misionDAO();
     public abstract SubMisionDAO subMisionDAO();
     public abstract InventarioDao inventarioDao();
-    public abstract TiendaDao tiendaDao(); // Added this
+    public abstract TiendaDao tiendaDao();
     
     private static volatile AppDatabase INSTANCE;
     public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(4);
@@ -37,7 +35,8 @@ public abstract class AppDatabase extends RoomDatabase{
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "app_database")
-                            .fallbackToDestructiveMigration().build();
+                            .fallbackToDestructiveMigration()
+                            .build();
                 }
             }
         }

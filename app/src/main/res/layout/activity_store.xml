@@ -4,20 +4,90 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#1A1A2E">
 
-    <TextView
-        android:id="@+id/tvTiendaTitulo"
-        android:layout_width="wrap_content"
+    <!-- CABECERA ESTILIZADA -->
+    <RelativeLayout
+        android:id="@+id/headerTienda"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Tienda de Objetos"
-        android:textColor="#333333"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="#16213E"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvTiendaTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="MERCADO"
+            android:textColor="#F8F8F2"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvOroDisponible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="#0F3460"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="Oro: 250"
+            android:textColor="#FFD369"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <!-- SECCIÓN DE RECOMPENSA CADA 15 MIN -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvFreeGold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardBackgroundColor="#0F3460"
+        app:cardCornerRadius="12dp"
+        app:layout_constraintTop_toBottomOf="@id/headerTienda">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🎁 Cofre Gratuito"
+                    android:textColor="#FFD369"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/tvTimerFreeGold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cargando..."
+                    android:textColor="#F8F8F2"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnClaimGold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RECLAMAR 50"
+                android:textSize="11sp"
+                android:backgroundTint="#E94560"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/tvTimerRestock"
@@ -25,31 +95,17 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Restock en: 00:00"
-        android:textColor="#FF5722"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:textColor="#A0A0A0"
+        android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTiendaTitulo" />
-
-    <TextView
-        android:id="@+id/tvOroDisponible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Oro: 0"
-        android:textColor="#FFC107"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/tvTiendaTitulo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvTiendaTitulo" />
+        app:layout_constraintTop_toBottomOf="@id/cvFreeGold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTienda"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

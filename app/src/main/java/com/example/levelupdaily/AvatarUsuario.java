@@ -10,14 +10,14 @@ import androidx.room.PrimaryKey;
                 entity = Usuario.class,
                 parentColumns = "id_usuario",
                 childColumns = "id_usuario",
-                onDelete = ForeignKey.CASCADE //Si se borra el usuario se borra tambien el avatar
+                onDelete = ForeignKey.CASCADE
         )
 )
 public class AvatarUsuario {
     @PrimaryKey(autoGenerate = true)
     public int id_avatar;
 
-    public int id_usuario; //Esta es la FK
+    public int id_usuario;
 
     public String avatar_name;
 
@@ -29,4 +29,6 @@ public class AvatarUsuario {
     public int xp;
 
     public int nivel;
+
+    public boolean tiene_escudo; // Nuevo campo para el escudo
 }

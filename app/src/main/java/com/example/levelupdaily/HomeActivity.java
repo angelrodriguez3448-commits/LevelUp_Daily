@@ -2,35 +2,23 @@ package com.example.levelupdaily;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.HashMap;
-import java.util.List;
-
 import android.widget.ImageView;
 import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity {
-    ControladorAvatar controladorAvatar = new ControladorAvatar(getApplication());
-    ControladorMision controladorMision = new ControladorMision(getApplication());
+    private ControladorAvatar controladorAvatar;
+    private ControladorMision controladorMision;
     private ExpandableListView listaPrincipales;
     private ExpandableListView listaSecundarias;
 
-    private Button btnCrearMision, btnTienda;
-
-    private TextView tNombreAvatar;
-    private TextView tHP;
-    private TextView tOro;
-    private TextView tNivel;
-    private TextView tXP;
-    private ImageView iAvatar;
-    private AppDatabase db;
-
-    //Temporal
+    private Button btnCrearMision, btnTienda, btnInventario;
+    private TextView tNombreAvatar, tHP, tOro, tNivel, tXP;
+    private ImageView iAvatar, imgShieldActive;
     private int userID;
 
     @Override
@@ -38,90 +26,72 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // Inicializar controladores
+        controladorAvatar = new ControladorAvatar(getApplication());
+        controladorMision = new ControladorMision(getApplication());
+
+        // Vincular vistas
         listaPrincipales = findViewById(R.id.listaPrincipales);
-
         listaSecundarias = findViewById(R.id.listaSecundarias);
-
         btnCrearMision = findViewById(R.id.btnCrearMision);
-
         btnTienda = findViewById(R.id.btnTienda);
-
+        btnInventario = findViewById(R.id.btnInventario);
+        
         tNombreAvatar = findViewById(R.id.tNombreAvatar);
-
         tHP = findViewById(R.id.tHP);
-
         tOro = findViewById(R.id.tOro);
-
         tNivel = findViewById(R.id.tNivel);
-
         tXP = findViewById(R.id.tXP);
-
         iAvatar = findViewById(R.id.iAvatar);
+        imgShieldActive = findViewById(R.id.imgShieldActive);
 
-        db = AppDatabase.getDatabase(this);
+        // Obtener ID de usuario
+        userID = getIntent().getIntExtra("id_usuario", -1);
+        if (userID == -1) {
+            userID = getIntent().getIntExtra("ID_user", -1);
+        }
 
+        // Configurar clics
         btnCrearMision.setOnClickListener(v -> {
-
-            Intent intent =
-                    new Intent(HomeActivity.this,
-                            MisionActivity.class);
-
+            Intent intent = new Intent(HomeActivity.this, MisionActivity.class);
             intent.putExtra("id_usuario", userID);
-
             startActivity(intent);
         });
 
         btnTienda.setOnClickListener(v -> {
-
-            Intent intent =
-                    new Intent(HomeActivity.this,
-                            StoreActivity.class);
-
+            Intent intent = new Intent(HomeActivity.this, StoreActivity.class);
             intent.putExtra("id_usuario", userID);
-
             startActivity(intent);
         });
 
-        Bundle extras = getIntent().getExtras();
+        btnInventario.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, InventarioActivity.class);
+            intent.putExtra("id_usuario", userID);
+            startActivity(intent);
+        });
 
-        if(extras != null){
-            userID = extras.getInt("id_usuario");
-        }
-        //CLICK SUBTAREAS PRINCIPALES
-        listaPrincipales.setOnChildClickListener(
-                (parent, v, groupPosition,
-                 childPosition, id) -> {
+        setupListListeners();
+    }
 
-                    marcarSubtarea(
-                            parent,
-                            groupPosition,
-                            childPosition
-                    );
+    private void setupListListeners() {
+        listaPrincipales.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+            marcarSubtarea(parent, groupPosition, childPosition);
+            return true;
+        });
 
-                    return true;
-                });
-
-        //CLICK SUBTAREAS SECUNDARIAS
-        listaSecundarias.setOnChildClickListener(
-                (parent, v, groupPosition,
-                 childPosition, id) -> {
-
-                    marcarSubtarea(
-                            parent,
-                            groupPosition,
-                            childPosition
-                    );
-
-                    return true;
-                });
+        listaSecundarias.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+            marcarSubtarea(parent, groupPosition, childPosition);
+            return true;
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        cargarMisiones();
-        cargarAvatar();
+        if (userID != -1) {
+            cargarMisiones();
+            cargarAvatar();
+        }
     }
 
     private void cargarMisiones() {
@@ -133,35 +103,17 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private void marcarSubtarea(
-            ExpandableListView parent,
-            int groupPosition,
-            int childPosition) {
+    private void marcarSubtarea(ExpandableListView parent, int groupPosition, int childPosition) {
+        MisionExpandableAdapter adapter = (MisionExpandableAdapter) parent.getExpandableListAdapter();
+        SubMision submision = (SubMision) adapter.getChild(groupPosition, childPosition);
 
-        MisionExpandableAdapter adapter =
-                (MisionExpandableAdapter)
-                        parent.getExpandableListAdapter();
-
-        SubMision submision =
-                (SubMision)
-                        adapter.getChild(
-                                groupPosition,
-                                childPosition
-                        );
-
-        // 1. Ahora llamamos al controlador de misiones para completar la tarea
         controladorMision.completarSubmision(submision.id_submisiones, () -> {
-
-            // 2. Procesar recompensas (5 oro, 10 xp por subtarea)
             controladorAvatar.procesarRecompensa(userID, 5, 10, avatar -> {
-
-                // 3. Verificar si esto cerró la misión completa
                 controladorMision.verificarYFinalizarMision(submision.id_mision, userID, new ControladorMision.FinalizacionCallBack() {
                     @Override
                     public void onMisionFinalizada(int oro, int xp) {
-                        // Recompensa extra por misión (15 oro, 20 xp según tu ControladorMision)
                         controladorAvatar.procesarRecompensa(userID, oro, xp, a -> runOnUiThread(() -> {
-                            Toast.makeText(HomeActivity.this, "¡Misión de Leyenda Completada!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomeActivity.this, "¡Misión Completada!", Toast.LENGTH_SHORT).show();
                             cargarAvatar();
                             cargarMisiones();
                         }));
@@ -174,69 +126,42 @@ public class HomeActivity extends AppCompatActivity {
                             cargarMisiones();
                         });
                     }
-
                 });
             });
         });
     }
 
     private void cargarAvatar() {
-
         controladorAvatar.obtenerAvatar(userID, avatarUsuario -> {
             if(avatarUsuario != null) {
-
                 runOnUiThread(() -> {
+                    tNombreAvatar.setText(avatarUsuario.avatar_name);
+                    tHP.setText("HP: " + avatarUsuario.hp);
+                    tOro.setText("Oro: " + avatarUsuario.oro);
+                    tNivel.setText("Nivel: " + avatarUsuario.nivel);
+                    tXP.setText("XP: " + avatarUsuario.xp);
 
-                    tNombreAvatar.setText(
-                            avatarUsuario.avatar_name
-                    );
-
-                    tHP.setText(
-                            "HP: " + avatarUsuario.hp
-                    );
-
-                    tOro.setText(
-                            "Oro: " + avatarUsuario.oro
-                    );
-
-                    tNivel.setText(
-                            "Nivel: " + avatarUsuario.nivel
-                    );
-
-                    tXP.setText(
-                            "XP: " + avatarUsuario.xp
-                    );
+                    // Mostrar/Ocultar escudo
+                    if (imgShieldActive != null) {
+                        imgShieldActive.setVisibility(avatarUsuario.tiene_escudo ? View.VISIBLE : View.GONE);
+                    }
 
                     // CARGAR PERSONAJE
-                    switch (avatarUsuario.imagen) {
-
-                        case "avatar_guerrero":
-
-                            iAvatar.setImageResource(
-                                    R.drawable.avatar_guerrero
-                            );
-                            break;
-
-                        case "avatar_mago":
-
-                            iAvatar.setImageResource(
-                                    R.drawable.avatar_mago
-                            );
-                            break;
-
-                        case "avatar_arquero":
-
-                            iAvatar.setImageResource(
-                                    R.drawable.avatar_arquero
-                            );
-                            break;
-
-                        case "avatar_paladin":
-
-                            iAvatar.setImageResource(
-                                    R.drawable.avatar_paladin
-                            );
-                            break;
+                    if (avatarUsuario.imagen != null) {
+                        switch (avatarUsuario.imagen) {
+                            case "avatar_guerrero":
+                                iAvatar.setImageResource(R.drawable.avatar_guerrero);
+                                break;
+                            case "avatar_mago":
+                                iAvatar.setImageResource(R.drawable.avatar_mago);
+                                break;
+                            case "avatar_arquero":
+                                iAvatar.setImageResource(R.drawable.avatar_arquero);
+                                break;
+                            case "avatar_paladin":
+                                iAvatar.setImageResource(R.drawable.avatar_paladin);
+                                break;
+                        }
                     }
                 });
             }
