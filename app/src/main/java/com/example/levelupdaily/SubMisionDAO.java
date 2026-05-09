@@ -17,4 +17,7 @@ public interface SubMisionDAO {
 
     @Query("UPDATE submisiones SET completada = 1 WHERE id_submisiones = :idSubmision")
     void completarSubmision(int idSubmision);
+
+    @Query("SELECT COUNT(*) FROM submisiones WHERE id_mision = :idMision AND completada = 0")
+    int obtenerSubmisionesPendientes(int idMision);
 }

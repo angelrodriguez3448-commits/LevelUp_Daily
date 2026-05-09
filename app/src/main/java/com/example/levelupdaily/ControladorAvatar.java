@@ -60,17 +60,23 @@ public class ControladorAvatar {
         });
     }
 
-    public void modificarXP(AvatarUsuario avatar, int cambioXP, DatosCallback callback){
-        executor.execute(()->{
-            int nuevaXP = avatar.xp + cambioXP;
-            if(nuevaXP >= 100){
-                avatar.xp = (nuevaXP - 100);
-                avatar.nivel++;
-            }else{
-                avatar.xp = nuevaXP;
+    // Nuevo metodo en ControladorAvatar.java
+    public void procesarRecompensa(int idUser, int oroGando, int xpGanada, DatosCallback callback) {
+        executor.execute(() -> {
+            AvatarUsuario avatar = avatarDao.obtenerAvatarPorUsuario(idUser);
+            if (avatar != null) {
+                avatar.oro += oroGando;
+                avatar.xp += xpGanada;
+
+                // Lógica de nivel (reutilizada de HomeActivity)
+                if (avatar.xp >= 100) {
+                    avatar.nivel += 1;
+                    avatar.xp = 0;
+                }
+
+                avatarDao.actualizarProgreso(avatar);
+                callback.onLoaded(avatar);
             }
-            avatarDao.actualizarProgreso(avatar);
-            callback.onLoaded(avatar);
         });
     }
 

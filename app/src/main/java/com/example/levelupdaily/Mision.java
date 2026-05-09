@@ -25,14 +25,14 @@ public class Mision {
 
     private String titulo;
     private String tipo;
-    private String fechaLimite;
+    private Date fechaLimite;
     private boolean completada;
 
     public Mision(
             int id_usuario,
             String titulo,
             String tipo,
-            String fechaLimite,
+            Date fechaLimite,
             boolean completada
     ) {
 
@@ -63,7 +63,7 @@ public class Mision {
         return tipo;
     }
 
-    public String getFechaLimite() {
+    public Date getFechaLimite() {
         return fechaLimite;
     }
 

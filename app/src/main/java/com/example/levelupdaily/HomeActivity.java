@@ -12,13 +12,15 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity {
-
+    ControladorAvatar controladorAvatar = new ControladorAvatar(getApplication());
+    ControladorMision controladorMision = new ControladorMision(getApplication());
     private ExpandableListView listaPrincipales;
     private ExpandableListView listaSecundarias;
 
-    private Button btnCrearMision;
+    private Button btnCrearMision, btnTienda;
 
     private TextView tNombreAvatar;
     private TextView tHP;
@@ -42,6 +44,8 @@ public class HomeActivity extends AppCompatActivity {
 
         btnCrearMision = findViewById(R.id.btnCrearMision);
 
+        btnTienda = findViewById(R.id.btnTienda);
+
         tNombreAvatar = findViewById(R.id.tNombreAvatar);
 
         tHP = findViewById(R.id.tHP);
@@ -61,6 +65,17 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent =
                     new Intent(HomeActivity.this,
                             MisionActivity.class);
+
+            intent.putExtra("id_usuario", userID);
+
+            startActivity(intent);
+        });
+
+        btnTienda.setOnClickListener(v -> {
+
+            Intent intent =
+                    new Intent(HomeActivity.this,
+                            StoreActivity.class);
 
             intent.putExtra("id_usuario", userID);
 
@@ -110,69 +125,10 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void cargarMisiones() {
-
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-
-            //MISIONES
-            List<Mision> principales = db.misionDAO().obtenerPrincipales(userID);
-
-            List<Mision> secundarias = db.misionDAO().obtenerSecundarias(userID);
-
-            //MAPAS
-            HashMap<Integer,
-                    List<SubMision>> mapaPrincipales =
-                    new HashMap<>();
-
-            HashMap<Integer,
-                    List<SubMision>> mapaSecundarias =
-                    new HashMap<>();
-
-            //SUBTAREAS PRINCIPALES
-            for(Mision m : principales) {
-
-                mapaPrincipales.put(
-                        m.getId(),
-
-                        db.subMisionDAO()
-                                .obtenerSubmisiones(
-                                        m.getId()
-                                )
-                );
-            }
-
-            //SUBTAREAS SECUNDARIAS
-            for(Mision m : secundarias) {
-
-                mapaSecundarias.put(
-                        m.getId(),
-
-                        db.subMisionDAO()
-                                .obtenerSubmisiones(
-                                        m.getId()
-                                )
-                );
-            }
-
+        controladorMision.cargarDatosMisiones(userID, (p, mp, s, ms) -> {
             runOnUiThread(() -> {
-
-                MisionExpandableAdapter adapterP =
-                        new MisionExpandableAdapter(
-                                this,
-                                principales,
-                                mapaPrincipales
-                        );
-
-                MisionExpandableAdapter adapterS =
-                        new MisionExpandableAdapter(
-                                this,
-                                secundarias,
-                                mapaSecundarias
-                        );
-
-                listaPrincipales.setAdapter(adapterP);
-
-                listaSecundarias.setAdapter(adapterS);
-
+                listaPrincipales.setAdapter(new MisionExpandableAdapter(this, p, mp));
+                listaSecundarias.setAdapter(new MisionExpandableAdapter(this, s, ms));
             });
         });
     }
@@ -193,75 +149,66 @@ public class HomeActivity extends AppCompatActivity {
                                 childPosition
                         );
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
+        // 1. Ahora llamamos al controlador de misiones para completar la tarea
+        controladorMision.completarSubmision(submision.id_submisiones, () -> {
 
-            //COMPLETAR SUBTAREA
-            db.subMisionDAO()
-                    .completarSubmision(
-                            submision.id_submisiones
-                    );
+            // 2. Procesar recompensas (5 oro, 10 xp por subtarea)
+            controladorAvatar.procesarRecompensa(userID, 5, 10, avatar -> {
 
-            //RECOMPENSAS
-            AvatarUsuario avatar =
-                    db.avatarDao()
-                            .obtenerAvatarPorUsuario(userID);
+                // 3. Verificar si esto cerró la misión completa
+                controladorMision.verificarYFinalizarMision(submision.id_mision, userID, new ControladorMision.FinalizacionCallBack() {
+                    @Override
+                    public void onMisionFinalizada(int oro, int xp) {
+                        // Recompensa extra por misión (15 oro, 20 xp según tu ControladorMision)
+                        controladorAvatar.procesarRecompensa(userID, oro, xp, a -> runOnUiThread(() -> {
+                            Toast.makeText(HomeActivity.this, "¡Misión de Leyenda Completada!", Toast.LENGTH_SHORT).show();
+                            cargarAvatar();
+                            cargarMisiones();
+                        }));
+                    }
 
-            avatar.xp += 10;
-            avatar.oro += 5;
+                    @Override
+                    public void onMisionSigueActiva() {
+                        runOnUiThread(() -> {
+                            cargarAvatar();
+                            cargarMisiones();
+                        });
+                    }
 
-            //SUBIR NIVEL
-            if(avatar.xp >= 100) {
-
-                avatar.nivel += 1;
-                avatar.xp = 0;
-            }
-
-            db.avatarDao()
-                    .actualizarProgreso(avatar);
-
-            runOnUiThread(() -> {
-
-                cargarMisiones();
-                cargarAvatar();
-
+                });
             });
         });
     }
 
     private void cargarAvatar() {
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-
-            AvatarUsuario avatar =
-                    db.avatarDao()
-                            .obtenerAvatarPorUsuario(userID);
-
-            if(avatar != null) {
+        controladorAvatar.obtenerAvatar(userID, avatarUsuario -> {
+            if(avatarUsuario != null) {
 
                 runOnUiThread(() -> {
 
                     tNombreAvatar.setText(
-                            avatar.avatar_name
+                            avatarUsuario.avatar_name
                     );
 
                     tHP.setText(
-                            "HP: " + avatar.hp
+                            "HP: " + avatarUsuario.hp
                     );
 
                     tOro.setText(
-                            "Oro: " + avatar.oro
+                            "Oro: " + avatarUsuario.oro
                     );
 
                     tNivel.setText(
-                            "Nivel: " + avatar.nivel
+                            "Nivel: " + avatarUsuario.nivel
                     );
 
                     tXP.setText(
-                            "XP: " + avatar.xp
+                            "XP: " + avatarUsuario.xp
                     );
 
                     // CARGAR PERSONAJE
-                    switch (avatar.imagen) {
+                    switch (avatarUsuario.imagen) {
 
                         case "avatar_guerrero":
 

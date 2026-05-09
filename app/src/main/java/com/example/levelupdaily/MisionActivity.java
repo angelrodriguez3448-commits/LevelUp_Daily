@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class MisionActivity extends AppCompatActivity {
 
@@ -23,7 +24,7 @@ public class MisionActivity extends AppCompatActivity {
     private Button btnGuardar;
     private Button btnFecha;
 
-    private String fechaSeleccionada = "";
+    private Calendar fechaSeleccionada = Calendar.getInstance();
 
     private AppDatabase db;
 
@@ -70,28 +71,26 @@ public class MisionActivity extends AppCompatActivity {
         //Seleccionar fecha
         btnFecha.setOnClickListener(v -> {
 
-            Calendar calendar =
-                    Calendar.getInstance();
-
             int year =
-                    calendar.get(Calendar.YEAR);
+                    fechaSeleccionada.get(Calendar.YEAR);
 
             int month =
-                    calendar.get(Calendar.MONTH);
+                    fechaSeleccionada.get(Calendar.MONTH);
 
             int day =
-                    calendar.get(Calendar.DAY_OF_MONTH);
+                    fechaSeleccionada.get(Calendar.DAY_OF_MONTH);
 
             DatePickerDialog dialog =
                     new DatePickerDialog(
                             this,
                             (view, y, m, d) -> {
+                                fechaSeleccionada.set(y, m, d);
 
-                                fechaSeleccionada =
-                                        d + "/" + (m + 1) + "/" + y;
+                                // Mostrarla en el TextView de forma legible
+                                String fechaFormateada = d + "/" + (m + 1) + "/" + y;
 
                                 btnFecha.setText(
-                                        fechaSeleccionada
+                                        fechaFormateada
                                 );
                             },
                             year,
@@ -118,8 +117,8 @@ public class MisionActivity extends AppCompatActivity {
                 spTipo.getSelectedItem()
                         .toString();
 
-        String fecha =
-                fechaSeleccionada;
+        Date fecha =
+                fechaSeleccionada.getTime();
 
         String textoSubtareas =
                 etSubtareas.getText()
@@ -181,7 +180,7 @@ public class MisionActivity extends AppCompatActivity {
                 return;
             }
 
-            if(fecha.isEmpty()) {
+            if(fecha == null) {
 
                 Toast.makeText(
                         this,
