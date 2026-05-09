@@ -9,8 +9,9 @@ import java.util.List;
 
 @Dao
 public interface TiendaDao {
-    @Query("SELECT items.*, tienda_stock.stock FROM items " +
-            "INNER JOIN tienda_stock ON items.id_item = tienda_stock.id_item")
+    @Query("SELECT items.*, COALESCE(tienda_stock.stock, 0) AS stock FROM items " +
+            "LEFT JOIN tienda_stock ON items.id_item = tienda_stock.id_item " +
+            "WHERE items.nombre != 'Salto Temporal'")
     List<ItemTiendaDisplay> getStockTienda();
 
     @Query("SELECT * FROM items")
@@ -27,4 +28,7 @@ public interface TiendaDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertarItemsBase(List<AvatarItem> items);
+
+    @Query("DELETE FROM items WHERE nombre = 'Salto Temporal'")
+    void eliminarSaltoTemporal();
 }

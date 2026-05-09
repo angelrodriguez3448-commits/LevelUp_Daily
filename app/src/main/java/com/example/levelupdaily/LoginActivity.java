@@ -21,24 +21,27 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.EditPassword);
         btnLogin = findViewById(R.id.btnLogin);
 
-        btnLogin.setOnClickListener(v->autenticarUsuario());
+        btnLogin.setOnClickListener(v -> autenticarUsuario());
     }
 
     private void autenticarUsuario(){
         ControladorAcceso control = new ControladorAcceso(getApplication());
-        String nombre = etNombre.getText().toString();
-        String password = etPassword.getText().toString();
+        String nombre = etNombre.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+
+        if (nombre.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Ingresa usuario y contraseña", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         control.autenticarUsuario(nombre, password, new ControladorAcceso.LoginCallback() {
             @Override
             public void onSuccess(Usuario usuario) {
-                runOnUiThread(()->{
-                    /*
+                runOnUiThread(() -> {
+                    Toast.makeText(LoginActivity.this, "¡Bienvenido!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    intent.putExtra("ID_user", usuario.id_usuario);
-                    startActivity(intent); */
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    intent.putExtra("id_usuario", usuario.id_usuario);
+                    // Pasamos el ID asegurando que sea un int
+                    intent.putExtra("id_usuario", (int) usuario.id_usuario);
                     startActivity(intent);
                     finish();
                 });
@@ -46,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                runOnUiThread(()->{
+                runOnUiThread(() -> {
                     Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
                 });
             }

@@ -1,14 +1,13 @@
 package com.example.levelupdaily;
 
 import android.app.Application;
-
+import android.util.Log;
 import java.util.concurrent.ExecutorService;
 
 public class ControladorAcceso {
     private final UsuarioDAO usuarioDao;
     private final ExecutorService executor;
 
-    //Constructor
     public ControladorAcceso(Application application){
         AppDatabase db = AppDatabase.getDatabase(application);
         usuarioDao = db.usuarioDao();
@@ -17,11 +16,16 @@ public class ControladorAcceso {
 
     public void autenticarUsuario(String nombre, String password, LoginCallback callback){
         executor.execute(()->{
-            Usuario usuario = usuarioDao.login(nombre, password);
-            if(usuario != null){
-                callback.onSuccess(usuario);
-            } else{
-                callback.onError("Usuario o contraseña incorrectos");
+            try {
+                Usuario usuario = usuarioDao.login(nombre, password);
+                if(usuario != null){
+                    callback.onSuccess(usuario);
+                } else{
+                    callback.onError("Usuario o contraseña incorrectos");
+                }
+            } catch (Exception e) {
+                Log.e("Login", "Error en login: " + e.getMessage());
+                callback.onError("Error de base de datos. Por favor, limpia los datos de la app.");
             }
         });
     }

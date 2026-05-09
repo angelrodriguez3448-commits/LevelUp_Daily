@@ -22,15 +22,17 @@ import java.util.Random;
 
 public class StoreActivity extends AppCompatActivity {
 
-    private TextView tvTimer, tvOro;
+    private TextView tvTimer, tvOro, tvTimerFreeGold;
+    private Button btnClaimGold;
     private RecyclerView rvTienda;
     private StoreAdapter adapter;
     private List<ItemTiendaDisplay> listaTienda = new ArrayList<>();
     private AvatarUsuario avatarActual;
     private int idUser;
 
-    private static final long RESTOCK_INTERVAL = 3600000; // 1 hora en ms
-    private CountDownTimer countDownTimer;
+    private static final long RESTOCK_INTERVAL = 3600000; // 1 hora
+    private static final long FREE_GOLD_INTERVAL = 900000; // 15 minutos
+    private CountDownTimer countDownTimerRestock, countDownTimerFreeGold;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +48,19 @@ public class StoreActivity extends AppCompatActivity {
 
         tvTimer = findViewById(R.id.tvTimerRestock);
         tvOro = findViewById(R.id.tvOroDisponible);
+        tvTimerFreeGold = findViewById(R.id.tvTimerFreeGold);
+        btnClaimGold = findViewById(R.id.btnClaimGold);
         rvTienda = findViewById(R.id.rvTienda);
 
         rvTienda.setLayoutManager(new LinearLayoutManager(this));
         adapter = new StoreAdapter();
         rvTienda.setAdapter(adapter);
 
+        btnClaimGold.setOnClickListener(v -> reclamarOroGratis());
+
         cargarDatosUsuario();
         verificarYRestockear();
+        verificarYTimerFreeGold();
     }
 
     private void cargarDatosUsuario() {
@@ -73,47 +80,53 @@ public class StoreActivity extends AppCompatActivity {
         long lastRestock = prefs.getLong("last_restock_time", 0);
         long currentTime = System.currentTimeMillis();
 
-        if (currentTime - lastRestock >= RESTOCK_INTERVAL || lastRestock == 0) {
-            restockearTienda(currentTime);
-        } else {
-            long remaining = RESTOCK_INTERVAL - (currentTime - lastRestock);
-            iniciarTimer(remaining);
-            cargarStockActual();
-        }
-    }
-
-    private void restockearTienda(long time) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
             
-            // 1. Asegurarnos que existan items en la base de datos
-            List<AvatarItem> itemsBase = db.tiendaDao().getTodosLosItems();
-            if (itemsBase.isEmpty()) {
-                List<AvatarItem> nuevos = new ArrayList<>();
-                nuevos.add(crearItem("Escudo Divino", "Protege de perder HP una vez.", 50));
-                nuevos.add(crearItem("Salto Temporal", "Completa una misión automáticamente.", 150));
-                nuevos.add(crearItem("Poción de XP", "Otorga 20 puntos de experiencia.", 80));
-                db.tiendaDao().insertarItemsBase(nuevos);
-                itemsBase = db.tiendaDao().getTodosLosItems();
+            // Asegurar items base
+            List<AvatarItem> nuevos = new ArrayList<>();
+            nuevos.add(crearItem("Escudo Divino", "Protege de perder HP una vez.", 50));
+            nuevos.add(crearItem("Minipoción de HP", "Recupera 20 HP.", 50));
+            nuevos.add(crearItem("Poción de Vida", "Recupera 25 HP.", 60));
+            nuevos.add(crearItem("Maxipoción de HP", "Recupera toda la vida.", 150));
+            nuevos.add(crearItem("Poción de XP", "Otorga 20 puntos de experiencia.", 80));
+            db.tiendaDao().insertarItemsBase(nuevos);
+            db.tiendaDao().eliminarSaltoTemporal();
+
+            List<ItemTiendaDisplay> stockActual = db.tiendaDao().getStockTienda();
+
+            if (currentTime - lastRestock >= RESTOCK_INTERVAL || lastRestock == 0 || stockActual.isEmpty()) {
+                ejecutarRestock(db, currentTime);
+            } else {
+                runOnUiThread(() -> {
+                    listaTienda.clear();
+                    listaTienda.addAll(stockActual);
+                    adapter.notifyDataSetChanged();
+                    long remaining = RESTOCK_INTERVAL - (currentTime - lastRestock);
+                    iniciarTimerRestock(remaining);
+                });
             }
+        });
+    }
 
-            // 2. Generar stock aleatorio
-            Random r = new Random();
-            List<TiendaItem> stockNuevos = new ArrayList<>();
-            for (AvatarItem item : itemsBase) {
-                int cantidadAleatoria = r.nextInt(10) + 1; // Entre 1 y 10
-                stockNuevos.add(new TiendaItem(item.id_item, cantidadAleatoria));
-            }
-            db.tiendaDao().actualizarStock(stockNuevos);
+    private void ejecutarRestock(AppDatabase db, long time) {
+        List<AvatarItem> itemsBase = db.tiendaDao().getTodosLosItems();
+        Random r = new Random();
+        List<TiendaItem> stockNuevos = new ArrayList<>();
+        for (AvatarItem item : itemsBase) {
+            stockNuevos.add(new TiendaItem(item.id_item, r.nextInt(10) + 1));
+        }
+        db.tiendaDao().actualizarStock(stockNuevos);
 
-            // 3. Guardar tiempo
-            getSharedPreferences("TiendaPrefs", MODE_PRIVATE).edit()
-                    .putLong("last_restock_time", time).apply();
+        getSharedPreferences("TiendaPrefs", MODE_PRIVATE).edit()
+                .putLong("last_restock_time", time).apply();
 
-            runOnUiThread(() -> {
-                iniciarTimer(RESTOCK_INTERVAL);
-                cargarStockActual();
-            });
+        List<ItemTiendaDisplay> finalStock = db.tiendaDao().getStockTienda();
+        runOnUiThread(() -> {
+            listaTienda.clear();
+            listaTienda.addAll(finalStock);
+            adapter.notifyDataSetChanged();
+            iniciarTimerRestock(RESTOCK_INTERVAL);
         });
     }
 
@@ -125,107 +138,120 @@ public class StoreActivity extends AppCompatActivity {
         return item;
     }
 
-    private void cargarStockActual() {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            AppDatabase db = AppDatabase.getDatabase(this);
-            List<ItemTiendaDisplay> stock = db.tiendaDao().getStockTienda();
-            runOnUiThread(() -> {
-                listaTienda.clear();
-                listaTienda.addAll(stock);
-                adapter.notifyDataSetChanged();
-            });
-        });
-    }
-
-    private void iniciarTimer(long ms) {
-        if (countDownTimer != null) countDownTimer.cancel();
-        countDownTimer = new CountDownTimer(ms, 1000) {
+    private void iniciarTimerRestock(long ms) {
+        if (countDownTimerRestock != null) countDownTimerRestock.cancel();
+        countDownTimerRestock = new CountDownTimer(ms, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                long minutes = (millisUntilFinished / 1000) / 60;
-                long seconds = (millisUntilFinished / 1000) % 60;
-                tvTimer.setText(String.format(Locale.getDefault(), "Restock en: %02d:%02d", minutes, seconds));
+                long min = (millisUntilFinished / 1000) / 60;
+                long sec = (millisUntilFinished / 1000) % 60;
+                tvTimer.setText(String.format(Locale.getDefault(), "Restock en: %02d:%02d", min, sec));
             }
+            @Override public void onFinish() { verificarYRestockear(); }
+        }.start();
+    }
 
+    private void verificarYTimerFreeGold() {
+        SharedPreferences prefs = getSharedPreferences("TiendaPrefs", MODE_PRIVATE);
+        long lastClaim = prefs.getLong("last_free_gold_time", 0);
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastClaim >= FREE_GOLD_INTERVAL) {
+            runOnUiThread(() -> {
+                tvTimerFreeGold.setText("¡Recompensa lista!");
+                btnClaimGold.setEnabled(true);
+            });
+        } else {
+            iniciarTimerFreeGold(FREE_GOLD_INTERVAL - (currentTime - lastClaim));
+        }
+    }
+
+    private void iniciarTimerFreeGold(long ms) {
+        runOnUiThread(() -> btnClaimGold.setEnabled(false));
+        if (countDownTimerFreeGold != null) countDownTimerFreeGold.cancel();
+        countDownTimerFreeGold = new CountDownTimer(ms, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long min = (millisUntilFinished / 1000) / 60;
+                long sec = (millisUntilFinished / 1000) % 60;
+                tvTimerFreeGold.setText(String.format(Locale.getDefault(), "Disponible en: %02d:%02d", min, sec));
+            }
             @Override
             public void onFinish() {
-                verificarYRestockear();
+                tvTimerFreeGold.setText("¡Recompensa lista!");
+                btnClaimGold.setEnabled(true);
             }
         }.start();
     }
 
-    private void realizarCompra(ItemTiendaDisplay display) {
+    private void reclamarOroGratis() {
         if (avatarActual == null) return;
-        if (avatarActual.oro < display.item.precio) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(this);
+            avatarActual.oro += 50;
+            db.avatarDao().actualizarProgreso(avatarActual);
+            getSharedPreferences("TiendaPrefs", MODE_PRIVATE).edit()
+                    .putLong("last_free_gold_time", System.currentTimeMillis()).apply();
+            runOnUiThread(() -> {
+                tvOro.setText("Oro: " + avatarActual.oro);
+                iniciarTimerFreeGold(FREE_GOLD_INTERVAL);
+                Toast.makeText(this, "¡+50 Oro reclamado!", Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    private void realizarCompra(ItemTiendaDisplay display) {
+        if (avatarActual == null || avatarActual.oro < display.item.precio) {
             Toast.makeText(this, "Oro insuficiente", Toast.LENGTH_SHORT).show();
             return;
         }
-
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
-            
-            // Verificamos stock en tiempo real
             TiendaItem ti = db.tiendaDao().getTiendaItem(display.item.id_item);
-            if (ti == null || ti.stock <= 0) {
-                runOnUiThread(() -> Toast.makeText(this, "Sin stock disponible", Toast.LENGTH_SHORT).show());
-                return;
-            }
+            if (ti == null || ti.stock <= 0) return;
 
-            // 1. Descontar Oro
             avatarActual.oro -= display.item.precio;
             db.avatarDao().actualizarProgreso(avatarActual);
-
-            // 2. Descontar Stock
             ti.stock--;
             db.tiendaDao().updateTiendaItem(ti);
 
-            // 3. Agregar al Inventario (Lógica de incremento)
-            AvatarInventario exist = null;
             List<ItemActividad> inv = db.inventarioDao().getInventarioPorAvatar(avatarActual.id_avatar);
+            AvatarInventario exist = null;
             for(ItemActividad ia : inv) {
                 if(ia.item.id_item == display.item.id_item) {
                     exist = new AvatarInventario(avatarActual.id_avatar, ia.item.id_item, ia.cantidad + 1);
                     break;
                 }
             }
-            if(exist == null) {
-                exist = new AvatarInventario(avatarActual.id_avatar, display.item.id_item, 1);
-            }
+            if(exist == null) exist = new AvatarInventario(avatarActual.id_avatar, display.item.id_item, 1);
             db.inventarioDao().agregarAlInventario(exist);
-            
+
             runOnUiThread(() -> {
                 tvOro.setText("Oro: " + avatarActual.oro);
-                cargarStockActual();
+                display.stock--;
+                adapter.notifyDataSetChanged();
                 Toast.makeText(this, "¡Compraste " + display.item.nombre + "!", Toast.LENGTH_SHORT).show();
             });
         });
     }
 
     class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> {
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tienda, parent, false);
-            return new ViewHolder(v);
+        @NonNull @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup p, int t) {
+            return new ViewHolder(LayoutInflater.from(p.getContext()).inflate(R.layout.item_tienda, p, false));
         }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            ItemTiendaDisplay display = listaTienda.get(position);
-            holder.tvNombre.setText(display.item.nombre);
-            holder.tvDesc.setText(display.item.descripcion);
-            holder.tvPrecio.setText("Precio: " + display.item.precio + " Oro");
-            holder.tvStock.setText("Stock: " + display.stock);
-            
-            holder.btnComprar.setEnabled(display.stock > 0);
-            holder.btnComprar.setOnClickListener(v -> realizarCompra(display));
+        @Override public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
+            ItemTiendaDisplay d = listaTienda.get(pos);
+            if (d.item != null) {
+                h.tvNombre.setText(d.item.nombre);
+                h.tvDesc.setText(d.item.descripcion);
+                h.tvPrecio.setText(d.item.precio + " Oro");
+                h.tvStock.setText("Stock: " + d.stock);
+                h.btnComprar.setEnabled(d.stock > 0);
+                h.btnComprar.setOnClickListener(v -> realizarCompra(d));
+            }
         }
-
-        @Override
-        public int getItemCount() {
-            return listaTienda.size();
-        }
-
+        @Override public int getItemCount() { return listaTienda.size(); }
         class ViewHolder extends RecyclerView.ViewHolder {
             TextView tvNombre, tvDesc, tvPrecio, tvStock;
             Button btnComprar;
@@ -238,5 +264,12 @@ public class StoreActivity extends AppCompatActivity {
                 btnComprar = itemView.findViewById(R.id.btnComprar);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (countDownTimerRestock != null) countDownTimerRestock.cancel();
+        if (countDownTimerFreeGold != null) countDownTimerFreeGold.cancel();
     }
 }
