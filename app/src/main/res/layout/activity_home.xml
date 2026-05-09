@@ -103,7 +103,7 @@
 
             </LinearLayout>
 
-            <!-- BOTON -->
+            <!-- BOTONES -->
             <Button
                 android:id="@+id/btnCrearMision"
                 android:layout_width="match_parent"
@@ -125,6 +125,17 @@
                 android:textSize="18sp"
                 android:backgroundTint="#E94560"
                 android:padding="12dp"/>
+
+            <Button
+                android:id="@+id/btnHistorial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#E94560"
+                android:padding="12dp"
+                android:text="📜 IR AL SALON DE LA GLORIA"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <!-- PRINCIPALES -->
             <TextView
