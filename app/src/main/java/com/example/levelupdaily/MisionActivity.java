@@ -90,6 +90,11 @@ public class MisionActivity extends AppCompatActivity {
                             (view, y, m, d) -> {
                                 fechaSeleccionada.set(y, m, d);
 
+                                fechaSeleccionada.set(Calendar.HOUR_OF_DAY, 23);
+                                fechaSeleccionada.set(Calendar.MINUTE, 59);
+                                fechaSeleccionada.set(Calendar.SECOND, 59);
+                                fechaSeleccionada.set(Calendar.MILLISECOND, 999);
+
                                 // Mostrarla en el TextView de forma legible
                                 String fechaFormateada = d + "/" + (m + 1) + "/" + y;
 
@@ -101,6 +106,8 @@ public class MisionActivity extends AppCompatActivity {
                             month,
                             day
                     );
+            // Limita la fecha a fechas futuras
+            dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
 
             dialog.show();
         });
