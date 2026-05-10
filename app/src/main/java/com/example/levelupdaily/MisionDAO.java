@@ -31,4 +31,7 @@ public interface MisionDAO {
 
     @Query("DELETE FROM misiones WHERE id = :idMision")
     void eliminarMision(int idMision);
+
+    @Query("SELECT * FROM misiones WHERE completada = 0 AND fechaLimite <= :limiteTime AND fechaLimite >= :currentTime")
+    List<Mision> obtenerMisionesPorVencer(long currentTime, long limiteTime);
 }

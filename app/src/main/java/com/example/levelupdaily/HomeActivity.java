@@ -1,15 +1,24 @@
 package com.example.levelupdaily;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -38,10 +47,30 @@ public class HomeActivity extends AppCompatActivity {
     private int clicsAvatar = 0;
     private boolean modoDeveloper = false;
 
+    private void crearCanalNotificaciones() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence nombre = "Alertas de Misiones";
+            String descripcion = "Notificaciones sobre misiones próximas a vencer";
+            int importancia = NotificationManager.IMPORTANCE_DEFAULT;
+
+            NotificationChannel canal = new NotificationChannel("CANAL_MISIONES", nombre, importancia);
+            canal.setDescription(descripcion);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(canal);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
 
         listaPrincipales = findViewById(R.id.listaPrincipales);
 
@@ -73,6 +102,13 @@ public class HomeActivity extends AppCompatActivity {
         iAvatar = findViewById(R.id.iAvatar);
 
         db = AppDatabase.getDatabase(this);
+
+        // Revision periodica de misiones para notificaciones
+        PeriodicWorkRequest peticionNotificaciones = new PeriodicWorkRequest.Builder(NotificacionWorker.class, 4, TimeUnit.HOURS)
+                .build();
+        WorkManager.getInstance(getApplicationContext()).enqueueUniquePeriodicWork("notificaciones", ExistingPeriodicWorkPolicy.KEEP, peticionNotificaciones);
+
+
 
         iAvatar.setOnClickListener(v -> {
             clicsAvatar++;
